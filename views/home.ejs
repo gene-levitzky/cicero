@@ -1,12 +1,27 @@
 <html>
-<head>
-<title>Solstice Home</title>
-<h1>Project Solstice Home</h1>
-</head>
-
-<body>
-<p>Logged in as: <%= name %>
-<br>Your current Password is : <%= pass %></p>
-
-</body>
+    <head>
+        <link rel="stylesheet" href="/css/global.css" />
+        <style type="text/css" title="currentStyle">
+            @import "/css/global.css";
+            @import "/css/bootstrap.min.css";
+        </style>
+        <script src="/javascript/jquery-1.10.1.js"></script>
+        <script src="/javascript/bootstrap.min.js"></script>
+        <script src="/javascript/global.js"></script>
+        <title><%= username %>'s Home Page</title>
+    </head>
+    
+    <body>
+        <div class="container">
+            <div class="heading">
+                Welcome!
+            </div>
+        <% if (newUser) { %>
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Welcome to Cicero, <%= username %>!</strong>
+            </div>
+        <% } %>
+        </div>
+    </body>
 </html>

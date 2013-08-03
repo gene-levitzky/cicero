@@ -14,23 +14,15 @@ exports.User = function (username, password)
   //user.id = userNum++; // No longer need this, see below
   
   user.save = function () {
-    // I've changed database/user.json, so check that out so the following makes more sense.
+
     var allUsers = require("../database/user.json");
     
-    // First, add id to *this* here using the topID from the database
-    // Don't forget to increment topID for the next user
-	this.id =  allUsers.topID;
-	allUsers.topID++;
+    id =  allUsers.topID;
+    allUsers.topID++;
     
-	allUsers.userList[this.id] = this;
-    // allUsers.userList.push(this); // Instead of just pushing it to allUsers, push it to userList
-                         // But, we need a good way of indexing for quick access. 
-                         // This is where the id comes in.
-                         // Do something like ...userList[this.id] = this
+    allUsers.userList[id] = this;
                          
-    // The rest should be the same
-                         
-    fs.writeFile("../solstice/database/user.json", JSON.stringify(allUsers), function(err){
+    fs.writeFile("../cicero/database/user.json", JSON.stringify(allUsers), function(err){
       if(err){throw err};
     });
   }
@@ -38,3 +30,16 @@ exports.User = function (username, password)
   return user;
 }
 
+exports.findByName = function(username) 
+{
+
+    var allUsers = require("../database/user.json").userList;
+    
+    for (id in allUsers) {
+        if (allUsers[id].username == username) {
+            return allUsers[id];
+        }
+    }
+    
+    return undefined;
+}
