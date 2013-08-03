@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>Solstice Home</title>
+<h1>Project Solstice Home</h1>
+</head>
+
+<body>
+<script>
+
+var name = req.param.name;
+var pass = req.param.pass;
+
+if(name != null && pass != null){
+document.write("Logged in as "+name);
+}else(){
+document.write("Error");
+}
+</script>
+</body>
+</html>

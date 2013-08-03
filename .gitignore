@@ -1,0 +1,2 @@
+# Ignore all node modules as they're very bulky
+node_modules/*
