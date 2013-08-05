@@ -2,44 +2,77 @@
 // Used for saving to permanent file
 var fs = require("fs");
 
-var userNum = 0;
-
-exports.User = function (username, password) 
+var User = function (username, password, userObject) 
 {
-  var user = {}; // <--- This is what I mean by *this* user.
-  
-  user.username = username;
-  user.password = password;
-  
-  //user.id = userNum++; // No longer need this, see below
-  
-  user.save = function () {
+    var user = {};
+    
+    user.username = username;
+    user.password = password;
+    
+    if (typeof userObject !== "undefined") {
+        user = userObject;
+    }
+    
+    user.save = function () {
 
-    var allUsers = require("../database/user.json");
+        var users = require("../database/user.json");
+        
+        if (typeof this.id === "undefined") {
+            this.id = users.topID;
+            users.topID++;
+        }
+        
+        users.objects[this.id] = this;
+                             
+        fs.writeFile("../cicero/database/user.json", JSON.stringify(users), function(err){
+            if(err){throw err};
+        });
+        
+        return this.id;
+    }
     
-    id =  allUsers.topID;
-    allUsers.topID++;
+    user.getCharacters = function () {
+        
+        var userCharacterTable = require("./userCharacter");
+        var characterTable = require("./character");
+        var outList = [];
+        
+        var userCharacters = userCharacterTable.findByUserId(this.id);
+        
+        for (var cid in userCharacters) {
+            outList[cid] = characterTable.findById(cid);
+        }        
+        
+        return outList;
+    }
     
-    allUsers.userList[id] = this;
-                         
-    fs.writeFile("../cicero/database/user.json", JSON.stringify(allUsers), function(err){
-      if(err){throw err};
-    });
-  }
-  
-  return user;
+    return user;
 }
+
+exports.User = User;
 
 exports.findByName = function(username) 
 {
 
-    var allUsers = require("../database/user.json").userList;
+    var users = require("../database/user.json").objects;
     
-    for (id in allUsers) {
-        if (allUsers[id].username == username) {
-            return allUsers[id];
+    for (var id in users) {
+    
+        if (users[id].username == username) {
+            return userFromJSON(users[id]);
         }
     }
     
     return undefined;
+}
+
+exports.findById = function(id) 
+{
+
+  var users = require("../database/user.json").objects;
+  return userFromJSON(users[id]);
+}
+
+function userFromJSON(userJSON) {
+    return new User("", "", userJSON);
 }

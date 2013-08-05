@@ -2,26 +2,127 @@
     <head>
         <link rel="stylesheet" href="/css/global.css" />
         <style type="text/css" title="currentStyle">
-            @import "/css/global.css";
-            @import "/css/bootstrap.min.css";
+          @import "/css/bootstrap.min.css";
+          @import "/css/global.css";
+        </style>
+        <style>
+          .nav li a{
+            color: #eee;
+            border: 1px solid #eee;
+            font-weight: bold;
+          }
+          .nav li a:hover {
+            color: #1e92cc;
+          }
+          .tab-content, .nav{
+            width: 95%;
+          }
+          .tab-content {
+            height: 600px;
+            border-left: 1px solid #eee;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            border-radius: 50px;
+            margin-bottom: 1em;
+            margin-top: 1.5em;
+          }
+          .tab-pane {
+            padding-left: 25px;
+            padding-right: 25px;
+          }
+          #bio {
+            border-left: 1px solid #eee;
+            border-right: 1px solid #eee;
+            border-radius: 50px;
+            color: #eee;
+            height: 20px;
+            padding-top: .5em;
+            padding-bottom: .5em;
+            width: 95%;
+          }
+          #bio p {
+            padding-left: 2em;
+          }
+          .tab-pane-heading {
+            border-bottom: 1px #eee dashed;
+            color: #eee; 
+            font-size: 24px; 
+            font-weight: bold;
+            text-align: center; 
+          }
+          #character-table, #character-table th {
+            border: 1px #eee dashed;
+            color: #eee;
+            margin: 25px;
+            padding: 15px;
+          }
         </style>
         <script src="/javascript/jquery-1.10.1.js"></script>
         <script src="/javascript/bootstrap.min.js"></script>
         <script src="/javascript/global.js"></script>
-        <title><%= username %>'s Home Page</title>
+        <script>
+            $( function () {
+                $('#home-nav a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+            });
+        </script>
+        <title><%= user.username %>'s Home Page</title>
     </head>
     
     <body>
         <div class="container">
             <div class="heading">
-                Welcome!
+                Cicero
             </div>
-        <% if (newUser) { %>
-            <div class="alert alert-danger">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Welcome to Cicero, <%= username %>!</strong>
+            <% if (newUser) { %>
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Welcome to Cicero, <%= user.username %>!</strong>
+                </div>
+            <% } %>
+            <ul class="nav nav-tabs" id="home-nav">
+                <li class="active"><a href="#home">Home</a></li>
+                <li><a href="#characters">Characters</a></li>
+                <li><a href="#profile">Profile</a></li>
+                <li><a href="#messages">Messages</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+            
+            <div id="bio">
+                <p><small>Welcome to Cicero, <%= user.username %>.</small></p>
             </div>
-        <% } %>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="home"></div>
+                <div class="tab-pane" id="characters">
+                    <div class="tab-pane-heading">
+                        <p>Your Characters</p>
+                    </div>
+                    <table id="character-table">
+                        <thead>
+                            <tr>
+                                <th>Character</th>
+                                <th>ID</th>
+                                <th>Login</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <% for (var id in characters) { %>
+                            <tr>
+                                <th><%= characters[id].name %></th>
+                                <th><%= id %></th>
+                                <th><a href="#" class="btn btn-success">Login</a></th>
+                                <th><a href="#" class="btn btn-danger">Delete</a></th>
+                            </tr>
+                        <% } %>
+                    </table>
+                </div>
+                <div class="tab-pane" id="profile"></div>
+                <div class="tab-pane" id="messages"></div>
+                <div class="tab-pane" id="settings"></div>
+            </div>
         </div>
     </body>
 </html>

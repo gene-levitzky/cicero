@@ -4,31 +4,35 @@
 
 .container {
   width: 85%;
-  padding-top: 200px;
+  padding-top: 50px;
   padding-left: 50px;
-  margin-top: 5em;
+  margin-top: 1em;
   margin-left: 5%;
   background: #1e92cc;
   border-top-left-radius: 50px;
   border-bottom-right-radius: 50px;
-  color: white;
+  color: #eee;
 }
 
 .heading {
-  color: white;
-  font-size: 94px;
+  color: #eee;
   font-family: "Calibri", sans-serif, monospace;
-  font-variant: small-caps;
+  font-size: 94px;
   font-style: oblique;
-  margin-top: -100px;
+  font-variant: small-caps;
   margin-bottom: 50px;
-  
   height: 50px;
-  width: 85%;
+  width: 95%;
   
-  border-bottom: white solid 1px;
+  border-top: #eee solid 1px;
+  border-left: #eee solid 1px;
+  border-right: #eee solid 1px;
+  border-radius: 50px;
+  
+  padding-top: .5em;
+  padding-bottom: .5em;
 }
-
+            
 input.wide {
   height: 50px;
   width: 300px;

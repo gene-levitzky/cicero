@@ -69,11 +69,21 @@ app.get('/login', function(req, res) {
 
 
 app.get('/home', function(req, res) {
-    indexView(req, res);
+    homeView(req, res);
 });
 
 
 app.post('/home', function(req, res) {
+    homeView(req, res);
+});
+
+
+app.get('/about', function(req, res) {
+    res.render('about');
+});
+
+
+function homeView(req, res) {
 
     var name = req.param('name');
     var pass = req.param('pass');
@@ -105,10 +115,10 @@ app.post('/home', function(req, res) {
         }
         
         var user = users.User(name, sha1.hash(pass));
-        user.save();
+        var id = user.save();
         
-        res.cookie('username', name, { maxAge: 900000, httpOnly: false });
-        res.render('home', {'username': name, 'name': metadata.name, 'newUser': true});
+        res.cookie('userId', id, { maxAge: 900000, httpOnly: false });
+        res.render('home', {'user': user, 'characters': user.getCharacters(), 'name': metadata.name, 'newUser': true});
         
         return;
     }
@@ -116,14 +126,9 @@ app.post('/home', function(req, res) {
     
         user = users.findByName(name);
         
-        if (!user) {
+        if (typeof user === "undefined") {
             res.render('login', {'name': metadata.name, 'loginUsernameError': 'That username does not exist.', 'loginPasswordError': undefined,
                 'signupUsernameError': undefined, 'signupPasswordError': undefined});
-            return;
-        }
-        if (user.length < 3) {
-            res.render('login', {'name': metadata.name, 'loginUsernameError': 'The username must contain at least 3 characters.', 
-                'loginPasswordError': undefined, 'signupUsernameError': undefined, 'signupPasswordError': undefined});
             return;
         }
         
@@ -133,31 +138,32 @@ app.post('/home', function(req, res) {
             return;
         }
         
-        res.cookie('username', name, { maxAge: 900000, httpOnly: false });
-        res.render('home', {'username': name, 'name': metadata.name, 'newUser': false});
+        res.cookie('userId', user.id, { maxAge: 900000, httpOnly: false });
+        res.render('home', {'user': user, 'characters': user.getCharacters(), 'name': metadata.name, 'newUser': false});
         
         return;
     }
     
-    loginView(req, res);
-});
-
-
-app.get('/about', function(req, res) {
-    res.render('about');
-});
+    indexView(req, res);
+}
 
 
 function indexView(req, res) {
 
-    username = req.cookies.username;
+    var userId = req.cookies.userId;
 
-    if (username && username.length > 0) {
-        res.render('home', {'username': username, 'name': metadata.name, 'newUser': false});
+    if (typeof userId !== "undefined") {
+
+        user = users.findById(userId);
+
+        if (typeof user !== "undefined") {
+          console.log("SUP" + user.getCharacters());
+          res.render('home', {'user': user, 'characters': user.getCharacters(), 'name': metadata.name, 'newUser': false});
+          return;
+        }
     }
-    else {
-        loginView(req, res);
-    }
+    
+    loginView(req, res);
 }
 
 
