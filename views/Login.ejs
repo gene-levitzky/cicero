@@ -6,13 +6,15 @@
           @import "/css/global.css";
         </style>
         <style>
+            #user-action {
+              clear: both;
+              margin-top: 50px;
+            }
             #login {
               float: left;
-              width: 45%;
             }
             #signup {
               float: right;
-              width: 45%;
             }
         </style>
         <script src="/javascript/jquery-1.10.1.js"></script>
@@ -23,50 +25,52 @@
     </head>
 
     <body>
-        <div class="container">
+        <div id="wrapper">
             <div class="heading">
                 <%= name %>
             </div>
-            <div id="login">
-                <h2>Log in</h2>
-                <form action="/home" method="POST">
-                    <% if (loginUsernameError) { %>
-                        <div class="alert alert-danger">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <strong><%= loginUsernameError %></strong>
-                        </div>
-                    <% } %>
-                    <input type="text" name="name" class="wide" placeholder="username"></br>
-                    <% if (loginPasswordError) { %>
-                        <div class="alert alert-danger">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <strong><%= loginPasswordError %></strong>
-                        </div>
-                    <% } %>
-                    <input type="password" name="pass" class="wide" placeholder="password"></br>
-                    <input type="submit" name="login" class="btn btn-primary wide" value="Log In">
-                </form>
-            </div>
-            <div id="signup">
-                <h2>... or Sign up</h2>
-                <form action="/home" method="POST">
-                    <% if (signupUsernameError) { %>
-                        <div class="alert alert-danger">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <strong><%= signupUsernameError %></strong>
-                        </div>
-                    <% } %>
-                    <input type="text" name="name" class="wide" placeholder="username"></br>
-                    <% if (signupPasswordError) { %>
-                        <div class="alert alert-danger">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <strong><%= signupPasswordError %></strong>
-                        </div>
-                    <% } %>
-                    <input type="password" name="pass" class="wide" placeholder="password"></br>
-                    <input type="password" name="pass-confirm" class="wide" placeholder="confirm password"></br>
-                    <input type="submit" name="signup" class="btn btn-success wide" value="Sign Up">
-                </form>
+            <div id="user-action">
+                <div id="login">
+                    <h2>Log in</h2>
+                    <form action="/home" method="POST">
+                        <% if (loginUsernameError) { %>
+                            <div class="alert alert-danger">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong><%= loginUsernameError %></strong>
+                            </div>
+                        <% } %>
+                        <input type="text" name="name" class="wide" placeholder="username"></br>
+                        <% if (loginPasswordError) { %>
+                            <div class="alert alert-danger">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong><%= loginPasswordError %></strong>
+                            </div>
+                        <% } %>
+                        <input type="password" name="pass" class="wide" placeholder="password"></br>
+                        <input type="submit" name="login" class="btn btn-primary wide" value="Log In">
+                    </form>
+                </div>
+                <div id="signup">
+                    <h2>... or Sign up</h2>
+                    <form action="/home" method="POST">
+                        <% if (signupUsernameError) { %>
+                            <div class="alert alert-danger">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong><%= signupUsernameError %></strong>
+                            </div>
+                        <% } %>
+                        <input type="text" name="name" class="wide" placeholder="username"></br>
+                        <% if (signupPasswordError) { %>
+                            <div class="alert alert-danger">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong><%= signupPasswordError %></strong>
+                            </div>
+                        <% } %>
+                        <input type="password" name="pass" class="wide" placeholder="password"></br>
+                        <input type="password" name="pass-confirm" class="wide" placeholder="confirm password"></br>
+                        <input type="submit" name="signup" class="btn btn-success wide" value="Sign Up">
+                    </form>
+                </div>
             </div>
         </div>
     </body>

@@ -12,23 +12,14 @@
             font-weight: bold;
           }
           .nav li a:hover {
-            color: #1e92cc;
+            color: #555;
           }
           .tab-content, .nav{
-            width: 95%;
-          }
-          .tab-content {
-            height: 600px;
-            border-left: 1px solid #eee;
-            border-right: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            border-radius: 50px;
-            margin-bottom: 1em;
-            margin-top: 1.5em;
+            margin-top: 50px;
+            width: 800px;
           }
           .tab-pane {
-            padding-left: 25px;
-            padding-right: 25px;
+            padding: 25px;
           }
           #bio {
             border-left: 1px solid #eee;
@@ -38,7 +29,7 @@
             height: 20px;
             padding-top: .5em;
             padding-bottom: .5em;
-            width: 95%;
+            width: 800px;
           }
           #bio p {
             padding-left: 2em;
@@ -72,8 +63,8 @@
     </head>
     
     <body>
-        <div class="container">
-            <div class="heading">
+        <div id="wrapper">
+            <div class="heading container">
                 Cicero
             </div>
             <% if (newUser) { %>
@@ -90,11 +81,11 @@
                 <li><a href="#settings">Settings</a></li>
             </ul>
             
-            <div id="bio">
+            <div id="bio" class="container">
                 <p><small>Welcome to Cicero, <%= user.username %>.</small></p>
             </div>
 
-            <div class="tab-content">
+            <div class="tab-content container">
                 <div class="tab-pane active" id="home"></div>
                 <div class="tab-pane" id="characters">
                     <div class="tab-pane-heading">
