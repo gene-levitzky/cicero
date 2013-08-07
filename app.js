@@ -3,9 +3,10 @@
  */
 var express = require('express')
     , http  = require('http')
+    , io    = require('socket.io')
     , path  = require('path')
-    , users = require('./models/user')
-    , sha1  = require('SHA1');
+    , sha1  = require('SHA1').getSha1()
+    , users = require('./models/user');
 
 /**
  *  Configuration and Middleware.
@@ -30,24 +31,28 @@ app.configure(function(){
     app.use(express.methodOverride());
     app.use(app.router);
     // Tells it where to found our javascript and css files
-    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express.static('public'));
 });
 
 app.configure('development', function() {
     app.use(express.errorHandler());
 });
 
-// For password hashing
-var sha1 = sha1.getSha1();
-
 // Data about the application
 var metadata = {
     name: 'Cicero'
 }
 
-/*
- *  Routes.
- */
+
+var server = http.createServer(app).listen(app.get('port'), function() {
+    console.log("Express server listening on port " + app.get('port'));
+});
+
+
+   /*************
+    *  Routes.
+    *************/
+ 
 /** 
  * If the server receives a request for "/",
  * Send them index.ejs.
@@ -63,11 +68,6 @@ app.get('/index', function(req, res) {
 });
 
 
-app.get('/login', function(req, res) {
-    loginView(req, res);
-});
-
-
 app.get('/home', function(req, res) {
     homeView(req, res);
 });
@@ -78,10 +78,29 @@ app.post('/home', function(req, res) {
 });
 
 
+app.get('/new-character', function (req, res) {
+    var userId = req.cookies.userId;
+    
+    if (!isUndefined(userId)) {
+        var user = users.findById(userId);
+        if (!isUndefined(user)) {
+            res.render('new-character', {'user': user, 'name': metadata.name});
+            return;
+        }
+    }
+    
+    loginView(req, res);
+});
+
+
+app.get('/login', function(req, res) {
+    loginView(req, res);
+});
+
+
 app.get('/about', function(req, res) {
     res.render('about');
 });
-
 
 function homeView(req, res) {
 
@@ -126,7 +145,7 @@ function homeView(req, res) {
     
         user = users.findByName(name);
         
-        if (typeof user === "undefined") {
+        if (isUndefined(user)) {
             res.render('login', {'name': metadata.name, 'loginUsernameError': 'That username does not exist.', 'loginPasswordError': undefined,
                 'signupUsernameError': undefined, 'signupPasswordError': undefined});
             return;
@@ -153,11 +172,8 @@ function indexView(req, res) {
     var userId = req.cookies.userId;
 
     if (typeof userId !== "undefined") {
-
         user = users.findById(userId);
-
-        if (typeof user !== "undefined") {
-          console.log("SUP" + user.getCharacters());
+        if (isUndefined(user)) {
           res.render('home', {'user': user, 'characters': user.getCharacters(), 'name': metadata.name, 'newUser': false});
           return;
         }
@@ -172,7 +188,57 @@ function loginView(req, res) {
         'signupUsernameError': undefined, 'signupPasswordError': undefined});
 }
 
+      /************
+       *  SOCKETS
+       ************/
 
-var server = http.createServer(app).listen(app.get('port'), function() {
-    console.log("Express server listening on port " + app.get('port'));
+var sio = io.listen(server);
+       
+sio.on('connection', function (socket) {
+
+    socket.emit('who-are-you?');
+    
+    
+    socket.on('i-am', function (data) {
+        if (isUndefined(data)) {
+            // TODO
+            socket.emit('not-logged-in');
+            console.log("USER NOT LOGGED IN");
+            return;
+        }
+        else {
+        
+            var user = users.findById(data.userId);
+            
+            if (isUndefined(user)) {
+                console.log("INVALID USER");
+                return;
+            }
+            else {   
+            
+                if (isUndefined(data.service)) {
+                    socket.emit('no-service-requested');
+                }
+                else {
+                
+                    if ('new-character' == data.service) {
+                        socket.emit('mode-switch', {"mode":"character-creation"});
+                    }
+                    else {
+                        // TODO
+                        console.log("ILLEGAL SERVICE REQUESTED");
+                        return;
+                    }
+                }
+            }
+        }
+    });
 });
+
+
+
+/** HELPER FUNCTIONS **/
+
+function isUndefined (obj) {
+    return typeof obj === "undefined";
+}
