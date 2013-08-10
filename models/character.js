@@ -1,12 +1,11 @@
 var characterNum = 0;
 
-exports.Character = function (name)
-{
-    var character = {};
+exports.Character = function (name, attributes)
+{    
+    this.name = name;    
+    this.attributes = attributes;
     
-    character.name = name;
-    
-    character.save = function () {
+    this.save = function () {
 
         var characters = require("../database/character.json");
         
@@ -19,16 +18,14 @@ exports.Character = function (name)
             if(err){throw err};
         });
         
-        return this.id;
+        return this;
     }
     
-    character.getUser = function () {
+    this.getUser = function () {
     
         var userCharacterTable = require("./userCharacter");
         return userCharacterTable.findByCharacterId(this.id);
     }
-    
-    return character;
 }
 
 exports.findById = function(id) 

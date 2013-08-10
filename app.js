@@ -79,6 +79,7 @@ app.post('/home', function(req, res) {
 
 
 app.get('/new-character', function (req, res) {
+
     var userId = req.cookies.userId;
     
     if (!isUndefined(userId)) {
@@ -104,11 +105,10 @@ app.get('/about', function(req, res) {
 
 function homeView(req, res) {
 
-    var name = req.param('name');
-    var pass = req.param('pass');
-
     if (req.param('signup')) {
     
+        var name = req.param('name');
+        var pass = req.param('pass');
         var passConfirm = req.param('pass-confirm');
         
         if (pass.length < 6) {
@@ -143,6 +143,9 @@ function homeView(req, res) {
     }
     else if (req.param('login')) {
     
+        var name = req.param('name');
+        var pass = req.param('pass');
+    
         user = users.findByName(name);
         
         if (isUndefined(user)) {
@@ -170,10 +173,10 @@ function homeView(req, res) {
 function indexView(req, res) {
 
     var userId = req.cookies.userId;
-
+    
     if (typeof userId !== "undefined") {
         user = users.findById(userId);
-        if (isUndefined(user)) {
+        if (!isUndefined(user)) {
           res.render('home', {'user': user, 'characters': user.getCharacters(), 'name': metadata.name, 'newUser': false});
           return;
         }

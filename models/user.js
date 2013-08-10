@@ -2,18 +2,18 @@
 // Used for saving to permanent file
 var fs = require("fs");
 
-var User = function (username, password, userObject) 
-{
-    var user = {};
-    
-    user.username = username;
-    user.password = password;
+
+exports.User = function (username, password, userObject) 
+{    
+    this.username = username;
+    this.password = password;
     
     if (typeof userObject !== "undefined") {
-        user = userObject;
+        this.username = userObject.username;
+        this.password = userObject.password;
     }
     
-    user.save = function () {
+    this.save = function () {
 
         var users = require("../database/user.json");
         
@@ -31,7 +31,7 @@ var User = function (username, password, userObject)
         return this.id;
     }
     
-    user.getCharacters = function () {
+    this.getCharacters = function () {
         
         var userCharacterTable = require("./userCharacter");
         var characterTable = require("./character");
@@ -45,11 +45,8 @@ var User = function (username, password, userObject)
         
         return outList;
     }
-    
-    return user;
 }
 
-exports.User = User;
 
 exports.findByName = function(username) 
 {

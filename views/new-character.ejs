@@ -2,7 +2,7 @@
     <head>
         <script src="/socket.io/socket.io.js"></script>
         <script src="/javascript/controllers/TitleMode.js"></script>
-        <script src="/javascript/controllers/ClientGameSession.js"></script>
+        <!--<script src="/javascript/controllers/ClientGameSession.js"></script>-->
         
         <script src="/javascript/jquery-1.10.1.js"></script>
         <script src="/javascript/jquery.cookie.js"></script>
@@ -12,8 +12,295 @@
           @import "/css/bootstrap.min.css";
           @import "/css/global.css";
         </style>
+        <style>
+          #attribute-container {
+            margin: 0 auto;
+            text-align: center;
+            padding: 15px;
+            width: 400px;
+          }
+          .minus, .plus {
+            font-size: 22px;
+            font-weight: bold;
+            height: 2.5em;
+            width: 2.5em;
+          }
+          .nav li a{
+            color: #eee;
+            border: 1px solid #eee;
+            font-weight: bold;
+          }
+          .nav li a:hover {
+            color: #555;
+          }
+          .tab-content, .nav{
+            margin-top: 50px;
+            width: 800px;
+          }
+          .tab-pane {
+            padding: 25px;
+          }
+          .tab-pane-heading {
+            border-bottom: 1px #eee dashed;
+            color: #eee; 
+            font-size: 24px; 
+            font-weight: bold;
+            text-align: center; 
+          }
+        </style>
+        <script>
+            $( function () {
+            
+                var maxAttributes = 39;
+                var availableAttributes = 15;
+            
+                $('#home-nav a').click( function(e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });              
+                
+                
+                $('.minus').click( function(e) {
+                    
+                    var classList = this.className.split(/\s+/);
+                    
+                    $('.attribute').each ( function() {
+                        // If the id of the Attribute matches a class of the button pressed
+                        if (classList.indexOf($(this).attr('id')) > -1) {
+                            // Try to decrement its value
+                            // If not all attributes spent
+                            if (availableAttributes < maxAttributes) {
+                                // If no longer at zero
+                                if (availableAttributes == 0) {
+                                     // enable addition
+                                    $('.plus').prop('disabled', false);
+                                }
+                                
+                                oldValue = parseInt($(this).val());
+                                
+                                if (oldValue > 0) {
+                                    $(this).val(oldValue - 1);
+                                    $('#total-attributes').val(++availableAttributes);
+                                }
+                            }
+                            
+                            // If there are no points too subtract, disable subtraction
+                            if (availableAttributes == maxAttributes) {
+                                $('.minus').prop('disabled', true);
+                            }
+                        }
+                    });
+                });
+                
+                
+                $('.plus').click( function(e) {
+                    
+                    var classList = this.className.split(/\s+/);
+                    
+                    $('.attribute').each ( function() {
+                        // If the id of the Attribute matches a class of the button pressed
+                        if (classList.indexOf($(this).attr('id')) > -1) {
+                            // Try to increment its value
+                            // If there are available points
+                            if (availableAttributes > 0) {
+                                // If no longer at max
+                                if (availableAttributes == maxAttributes) {
+                                     // enable subtraction
+                                    $('.minus').prop('disabled', false);
+                                }
+                                oldValue = parseInt($(this).val());
+                                $(this).val(oldValue + 1);
+                                $('#total-attributes').val(--availableAttributes);
+                            }
+                            
+                            // If there are no available points now, disable addition
+                            if (availableAttributes == 0) {
+                                $('.plus').prop('disabled', true);
+                            }
+                        }
+                    });
+                });
+                
+                
+                $('.attr-popover').popover({
+                    trigger: 'hover',
+                    html: true,
+                });
+            });
+        </script>
         <title>Cicero - New Character</title>
     </head>
     <body>
+        <div id="wrapper">
+            <div class="heading container">
+                Cicero
+            </div>
+            
+            <ul class="nav nav-tabs" id="home-nav">
+                <li class="active"><a href="#astronomy">Astronomy</a></li>
+                <li><a href="#biology">Biology</a></li>
+                <li><a href="#geography">Geography</a></li>
+                <li><a href="#biography">Biography</a></li>
+            </ul>
+
+            <div class="tab-content container">
+                <div class="tab-pane active" id="astronomy"></div>
+                <div class="tab-pane" id="biology">
+                    <div class="tab-pane-heading">
+                        <p>Choose your physical attributes.</p>
+                    </div>
+                    
+                    <div id="attribute-container">
+                        <table id="total-attributes-table" style="width: 400px;">
+                            <tbody>
+                                <tr>
+                                    <th>Total Attributes Left:</th>
+                                    <th><input id="total-attributes" type="text" style="width:70px;" value=15 readonly></th>
+                                </th>
+                                <tr>
+                            </tbody>
+                        </table>
+                        <table id="attribute-table" style="width: 400px;">
+                            <tbody>
+                                <tr>
+                                    <th><button class="btn btn-success btn-lg plus agi"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#agi-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Agility <small>[`agi`]</small> determines how fast you can move as well as how fast you you can perform actions in combat. <small>Click for more details.</small>">
+                                            <h1>Agility</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="agi" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus agi"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus cha"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#cha-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Charisma <small>[`cha`]</small> determines your relationships with NPCs and your enmity with enemies. <small>Click for more details.</small>">
+                                            <h1>Charisma</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="cha" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus cha"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus end"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#end-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Endurance <small>[`end`]</small> modulates how quickly your stamina depletes and replenishes. <small>Click for more details.</small>">
+                                            <h1>Endurance</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="end" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus end"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus for"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#for-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Fortitude <small>[`for`]</small> augments how much damage you take from magic and the environment. <small>Click for more details.</small>">
+                                            <h1>Fortitude</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="for" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus for"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus log"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#log-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Logic <small>[`log`]</small> plays an important role in your magic's effectiveness. <small>Click for more details.</small>">
+                                            <h1>Logic</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="log" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus log"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus luc"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#luc-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Luck <small>[`luc`]</small> plays a small role in almost every event. <small>Click for more details.</small>">
+                                            <h1>Luck</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="luc" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus luc"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus pre"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#pre-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Precision <small>[`pre`]</small> determines the accuracy of your physical attacks. <small>Click for more details.</small>">
+                                            <h1>Precision</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="pre" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus pre"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus ref"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#ref-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Your reflexes <small>[`ref`]</small> determine how well you react to enemy attacks, both physical and magic. <small>Click for more details.</small>">
+                                            <h1>Reflex</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="ref" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus ref"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus rob"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#rob-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Robustness <small>[`rob`]</small> augments how much damage you take from physical attacks and the environment. <small>Click for more details.</small>">
+                                            <h1>Robustness</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="rob" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus rob"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus str"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#str-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Strength <small>[`str`]</small> determines the effectiveness of your physical attacks. <small>Click for more details.</small>">
+                                            <h1>Strength</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="str" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus str"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus vit"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#vit-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Vitality <small>[`vit`]</small> determines the rate at which HP and MP replenish. <small>Click for more details.</small>">
+                                            <h1>Vitality</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="vit" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus vit"><strong>-</strong></button></th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-success plus wis"><strong>+</strong></button></th>
+                                    <th>
+                                        <a href="#wis-modal" class="attr-popover label label-default" rel="popover" 
+                                            data-content="Wisdom <small>[`wis`]</small> moderates MP consumption. <small>Click for more details.</small>">
+                                            <h1>Wisdom</h1>
+                                        </a>
+                                    </th>
+                                    <th><input id="wis" class="attribute" type="text" style="width:35px;" value=2 readonly></th>
+                                    <th><button class="btn btn-danger minus wis"><strong>-</strong></button></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane" id="geography"></div>
+                <div class="tab-pane" id="biography"></div>
+            </div>
+        </div>
     </body>
 </html>

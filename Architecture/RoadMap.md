@@ -82,5 +82,15 @@ Priority is denoted by stars.
 
 ## Ideas
 * Multiple tiles layered on top of each other to produce stacked effects.
-* Up to 6 players per tile. Arrange players like dots on a domino.
+* Players move continuously along grid, not discretely.
 * Visible but stationary mobs.
+* Inventory limitations
+  * Carts
+    * Can be lost if all associated players die,
+    * Can be shared by party
+* Purse limitations, 100 gold, 1000 bank notes, 10 crowns
+  * 1 bank note = 100 gold, 1 crown = 1000 bank notes (100,000 gold)
+* Boat
+  * Boat combat?
+* Potency - players' actions more potent after training (grinding), less so after KOing.
+* Shops and businesses
