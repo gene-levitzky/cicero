@@ -40,7 +40,7 @@ app.configure('development', function() {
 
 // Data about the application
 var metadata = {
-    name: 'Cicero'
+    name: 'The Acts of Man'
 }
 
 
@@ -85,7 +85,10 @@ app.get('/new-character', function (req, res) {
     if (!isUndefined(userId)) {
         var user = users.findById(userId);
         if (!isUndefined(user)) {
-            res.render('new-character', {'user': user, 'name': metadata.name});
+            res.render('new-character', {
+                'user': user, 
+                'name': metadata.name,
+            });
             return;
         }
     }
@@ -111,33 +114,69 @@ function homeView(req, res) {
         var pass = req.param('pass');
         var passConfirm = req.param('pass-confirm');
         
+        // Password too short
         if (pass.length < 6) {
-            res.render('login', {'name': metadata.name, 'loginUsernameError': undefined, 'loginPasswordError': undefined,
-                'signupUsernameError': undefined, 'signupPasswordError': 'Password must be at least 6 characters long.'});
+            res.render('login', {   
+                'name'                : metadata.name, 
+                'loginUsernameError'  : undefined, 
+                'loginPasswordError'  : undefined,
+                'signupUsernameError' : undefined, 
+                'signupPasswordError' : 'Password must be at least 6 characters long.',
+            });
             return;
         }
+        
+        // Confirmation password doesn't match
         if (pass != passConfirm) {
-            res.render('login', {'name': metadata.name, 'loginUsernameError': undefined, 'loginPasswordError': undefined,
-                'signupUsernameError': undefined, 'signupPasswordError': 'The passwords do not match.'});
+            res.render('login', {   
+                'name'                : metadata.name, 
+                'loginUsernameError'  : undefined, 
+                'loginPasswordError'  : undefined,
+                'signupUsernameError' : undefined, 
+                'signupPasswordError' : 'The passwords do not match.',
+            });
             return;
         }
         
-        if (users.length < 3) {
-            res.render('login', {'name': metadata.name, 'name': metadata.name, 'loginUsernameError': undefined, 'loginPasswordError': undefined,
-                'signupUsernameError': 'The username must be at least 3 characters.', 'signupPasswordError': undefined});
-            return;
-        }
-        if (users.findByName(name)) {
-            res.render('login', {'name': metadata.name, 'name': metadata.name, 'loginUsernameError': undefined, 'loginPasswordError': undefined,
-                'signupUsernameError': 'That username is already taken.', 'signupPasswordError': undefined});
+        // Username too short
+        if (name.length < 3) {
+            res.render('login', {   
+                'name'                : metadata.name, 
+                'name'                : metadata.name, 
+                'loginUsernameError'  : undefined, 
+                'loginPasswordError'  : undefined,
+                'signupUsernameError' : 'The username must be at least 3 characters.', 
+                'signupPasswordError' : undefined,
+            });
             return;
         }
         
-        var user = users.User(name, sha1.hash(pass));
+        // Username already taken
+        if (name.findByName(name)) {
+            res.render('login', {   
+                'name'                : metadata.name, 
+                'name'                : metadata.name, 
+                'loginUsernameError'  : undefined, 
+                'loginPasswordError'  : undefined,
+                'signupUsernameError' : 'That username is already taken.', 
+                'signupPasswordError' : undefined,
+            });
+            return;
+        }
+        
+        var user = users.User({
+            "username" : name, 
+            "password" : sha1.hash(pass),
+        );
         var id = user.save();
         
         res.cookie('userId', id, { maxAge: 900000, httpOnly: false });
-        res.render('home', {'user': user, 'characters': user.getCharacters(), 'name': metadata.name, 'newUser': true});
+        res.render('home', {
+            'user'       : user, 
+            'characters' : user.getCharacters(), 
+            'name'       : metadata.name, 
+            'newUser'    : true,
+        });
         
         return;
     }
@@ -148,20 +187,36 @@ function homeView(req, res) {
     
         user = users.findByName(name);
         
+        // User does not exist
         if (isUndefined(user)) {
-            res.render('login', {'name': metadata.name, 'loginUsernameError': 'That username does not exist.', 'loginPasswordError': undefined,
-                'signupUsernameError': undefined, 'signupPasswordError': undefined});
+            res.render('login', {   
+                'name'                : metadata.name, 
+                'loginUsernameError'  : 'That username does not exist.', 
+                'loginPasswordError'  : undefined, 
+                'signupUsernameError' : undefined, 
+                'signupPasswordError' : undefined,    
+            });
             return;
         }
         
+        // Incorrect password
         if (pass.length < 6 || sha1.hash(pass) != user.password) {
-            res.render('login', {'name': metadata.name, 'loginUsernameError': undefined, 'loginPasswordError': 'Incorrect password.',
-                'signupUsernameError': undefined, 'signupPasswordError': undefined});
+            res.render('login', {
+                'name'                : metadata.name, 
+                'loginUsernameError'  : undefined, 
+                'loginPasswordError'  : 'Incorrect password.',
+                'signupUsernameError' : undefined, 'signupPasswordError': undefined,
+            });
             return;
         }
         
         res.cookie('userId', user.id, { maxAge: 900000, httpOnly: false });
-        res.render('home', {'user': user, 'characters': user.getCharacters(), 'name': metadata.name, 'newUser': false});
+        res.render('home', {
+            'user'       : user, 
+            'characters' : user.getCharacters(), 
+            'name'       : metadata.name, 
+            'newUser'    : false,
+        });
         
         return;
     }
@@ -177,7 +232,12 @@ function indexView(req, res) {
     if (typeof userId !== "undefined") {
         user = users.findById(userId);
         if (!isUndefined(user)) {
-          res.render('home', {'user': user, 'characters': user.getCharacters(), 'name': metadata.name, 'newUser': false});
+          res.render('home', {
+              'user'       : user, 
+              'characters' : user.getCharacters(), 
+              'name'       : metadata.name, 
+              'newUser'    : false,
+          });
           return;
         }
     }
@@ -187,8 +247,13 @@ function indexView(req, res) {
 
 
 function loginView(req, res) {
-    res.render('Login', {'name': metadata.name, 'loginUsernameError': undefined, 'loginPasswordError': undefined,
-        'signupUsernameError': undefined, 'signupPasswordError': undefined});
+    res.render('Login', {
+        'name'                : metadata.name, 
+        'loginUsernameError'  : undefined, 
+        'loginPasswordError'  : undefined,
+        'signupUsernameError' : undefined, 
+        'signupPasswordError' : undefined,
+    });
 }
 
       /************

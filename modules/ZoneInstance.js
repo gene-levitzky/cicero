@@ -6,28 +6,26 @@ var GameSession = require("./modules/ServerGameSession");
 
 exports.ZoneInstance = function(zone, game) {
 
-    var instance = {};
-
     /*
      * The Zone model object that this instance wraps.
      */
-    instance.zone = zone;
+    this.zone = zone;
     
     /*
      * The main game object to which this instance belongs.
      */
-    instance.game = game;
+    this.game = game;
     
     /*
      * Dictionary of all active game sessions (logged in users / characters) in
      * this zone.
      */
-    instance.gameSessions = {};
+    this.gameSessions = {};
     
     /*
      * Dictionary of the coordinates of all PC/NPCs in this zone.
      */
-    instance.coordinates = {
+    this.coordinates = {
         pc:  {}, // player character coordinates
         npc: {}, // non-player character coordinates
     }
@@ -37,15 +35,15 @@ exports.ZoneInstance = function(zone, game) {
      * otherwise.
      *
      * @param {int} The ID of the character.
-     * @return {object} Returns the character if it exists, or null otherwise.
+     * @return {object} Returns the character if it exists, or undefined otherwise.
      */
-    instance.getCharacter = function(cid) {
+    this.getCharacter = function(cid) {
 
-        if (cid in this.gameSessions && null !== this.gameSessions[cid]) {
+        if (cid in this.gameSessions) {
             return this.gameSessions[cid].getCharacter();
         }
         
-        return null;
+        return;
     }
 
     /**
@@ -53,14 +51,12 @@ exports.ZoneInstance = function(zone, game) {
      * @return {object} Returns a dictionary of all character ID : character
      *                  pairs from this zone.
      */
-    instance.getCharacters = function() {
+    this.getCharacters = function() {
 
         var characters = {};
         
         for (gid in this.gameSessions) {
-            if (null !== this.gameSessions[gid]) {
-                characters[gid] = this.gameSessions[gid].getCharacter();
-            }
+            characters[gid] = this.gameSessions[gid].getCharacter();
         }
         
         return characters;
@@ -74,7 +70,7 @@ exports.ZoneInstance = function(zone, game) {
      * @return {string} Returns an empty string if character added
      *                  successfully, or an error message otherwise.
      */
-    instance.addCharacter = function(character, socket) {
+    this.addCharacter = function(character, socket) {
 
         if (character.id in this.gameSessions && null !== this.gameSession[character.id]) {
             return "That character is already logged in.";
@@ -85,7 +81,7 @@ exports.ZoneInstance = function(zone, game) {
         this.gameSessions[character.id] = gameSession;
         
         // Add to coordinates
-        this.coordinates.pc.character.id = {
+        this.coordinates.pc[character.id] = {
             x: character.location.x,
             y: character.location.y,
         };
@@ -100,9 +96,9 @@ exports.ZoneInstance = function(zone, game) {
      * @return {string} An empty string if the character was removed
      *                  successfully, or an error message otherwise.
      */
-    instance.removeCharacter = function(cid) {
+    this.removeCharacter = function(cid) {
         
-        if (cid in this.gameSessions && null != this.gameSessions[cid]) {
+        if (cid in this.gameSessions) {
             
             // Remove game session
             delete this.gameSessions[cid];
@@ -126,25 +122,19 @@ exports.ZoneInstance = function(zone, game) {
      * @param {string} Returns an empty string if the character was 
      *                 transferred successfully, or an error message otherwise.
      */
-    instance.transferCharacter = function(cid, destinationId, x, y) {
+    this.transferCharacter = function(cid, destinationId, x, y) {
     
         if (cid in this.gameSessions) {
-        
-            if (null !== this.gameSessions[cid]) {
-                // Ask game to make the transfer
-                var result = this.game.transferCharacter(this.gameSessions[cid], destinationId, x, y);
-                if ("" === result) {
-                    // The transfer went okay
-                    this.removeCharacter(cid);
-                    return "";
-                }
-                else {
-                    // The transfer didn't go okay
-                    return result;
-                }
+            // Ask game to make the transfer
+            var result = this.game.transferCharacter(this.gameSessions[cid], destinationId, x, y);
+            if ("" === result) {
+                // The transfer went okay
+                this.removeCharacter(cid);
+                return "";
             }
             else {
-                return "The character is no longer active in this zone.";
+                // The transfer didn't go okay
+                return result;
             }
         }
         else {
@@ -157,7 +147,7 @@ exports.ZoneInstance = function(zone, game) {
      * Updates the game zone object, and broadcasts changes to all embedded
      * users.
      */
-    instance.update = function() {
+    this.update = function() {
     
         for (gid in gameSessions) {
             // #TODO 
@@ -173,7 +163,7 @@ exports.ZoneInstance = function(zone, game) {
      * @return {string} Returns an empty string if character moved 
      *                  successfully, or an error message otherwise.
      */
-     instance.moveCharacter = function(character, direction) {
+     this.moveCharacter = function(character, direction) {
         
         // The current position of the character
         var x = character.location.x;
@@ -185,8 +175,8 @@ exports.ZoneInstance = function(zone, game) {
         switch (direction.toLowerCase()) {
         
             case "north": 
-                if (typeof this.getTile(x, y - delta) !== "undefined") {
-                    character.location.y = y - delta;
+                if (typeof this.zone.get(x, y - delta) !== "undefined") {
+                    character.location.y -= delta;
                     return "";
                 }
                 else {
@@ -195,8 +185,8 @@ exports.ZoneInstance = function(zone, game) {
                 break;
                 
             case "south": 
-                if (typeof this.getTile(x, y + delta) !== "undefined") {
-                    character.location.y = y + delta;
+                if (typeof this.zone.get(x, y + delta) !== "undefined") {
+                    character.location.y += delta;
                     return "";
                 }
                 else {
@@ -205,8 +195,8 @@ exports.ZoneInstance = function(zone, game) {
                 break;
                 
             case "west": 
-                if (typeof this.getTile(x - delta, y) !== "undefined") {
-                    character.location.x = x - delta;
+                if (typeof this.zone.get(x - delta, y) !== "undefined") {
+                    character.location.x -= delta;
                     return "";
                 }
                 else {
@@ -215,8 +205,8 @@ exports.ZoneInstance = function(zone, game) {
                 break;
                 
             case "east": 
-                if (typeof this.getTile(x + delta, y) !== "undefined") {
-                    character.location.x = x + delta;
+                if (typeof this.zone.get(x + delta, y) !== "undefined") {
+                    character.location.x += delta;
                     return "";
                 }
                 else {

@@ -3,28 +3,28 @@
 var fs = require("fs");
 
 
-exports.User = function (username, password, userObject) 
+var User = function (userObject) 
 {    
-    this.username = username;
-    this.password = password;
-    
-    if (typeof userObject !== "undefined") {
-        this.username = userObject.username;
-        this.password = userObject.password;
-    }
+    this.class = "User";
+
+    this.id = userObject.id;
+    this.username = userObject.username;
+    this.password = userObject.password;
     
     this.save = function () {
 
-        var users = require("../database/user.json");
+        var user = require("../database/user.json");
         
-        if (typeof this.id === "undefined") {
-            this.id = users.topID;
-            users.topID++;
+        if (typeof this.id !== "undefined") {
+            user.objects[this.id] = this;
         }
-        
-        users.objects[this.id] = this;
+        else {
+            this.id = user.topID;
+            user.topID++;
+            user.objects[this.id] = this;
+        }
                              
-        fs.writeFile("../cicero/database/user.json", JSON.stringify(users), function(err){
+        fs.writeFile("database/user.json", JSON.stringify(user), function(err){
             if(err){throw err};
         });
         
@@ -48,28 +48,26 @@ exports.User = function (username, password, userObject)
 }
 
 
-exports.findByName = function(username) 
-{
+var findByName = function(username) {
 
-    var users = require("../database/user.json").objects;
+    var user = require("../database/user.json");
     
-    for (var id in users) {
-    
-        if (users[id].username == username) {
-            return userFromJSON(users[id]);
+    for (var id in user.objects) {
+        if (username === user.objects[id].username) {
+            return User(user.objects[id]);
         }
     }
     
-    return undefined;
+    return;
 }
 
-exports.findById = function(id) 
-{
+var findById = function(id) {
 
   var users = require("../database/user.json").objects;
-  return userFromJSON(users[id]);
+  return User(users[id]);
 }
 
-function userFromJSON(userJSON) {
-    return new User("", "", userJSON);
-}
+
+exports.findById = findById;
+exports.findByName = findByName;
+exports.User = User;

@@ -1,24 +1,35 @@
+
+var fs = require("fs");
+
 var characterNum = 0;
 
-exports.Character = function (name, attributes)
+
+var Character = function (characterObject)
 {    
-    this.name = name;    
-    this.attributes = attributes;
+    this.class = "Character";
+    
+    this.id = characterObject.id;
+    this.name = characterObject.name;
+    this.attributes = characterObject.attributes
     
     this.save = function () {
 
-        var characters = require("../database/character.json");
+        var character = require("../database/character.json");
         
-        this.id =  characters.topID;
-        characters.topID++;
-        
-        characters.objects[id] = this;
+        if (typeof this.id !== "undefined") {
+            character.objects[this.id] = this;
+        }
+        else {
+            this.id =  characters.topId;
+            characters.topId++;        
+            characters.objects[id] = this;
+        }
                              
-        fs.writeFile("../cicero/database/characters.json", JSON.stringify(characters), function(err){
+        fs.writeFile("database/character.json", JSON.stringify(characters), function(err){
             if(err){throw err};
         });
         
-        return this;
+        return this.id;
     }
     
     this.getUser = function () {
@@ -28,9 +39,25 @@ exports.Character = function (name, attributes)
     }
 }
 
-exports.findById = function(id) 
-{
+var findById = function(id) {
 
-  var characters = require("../database/character.json").objects;
-  return characters[id];
+    var characters = require("../database/character.json").objects;
+    return Character(characters[id]);
 }
+
+var findByName = function(name) {
+    
+    var character = require("../database/character.json");
+    
+    for (id in character.objects) {
+        if (name === character.objects[id]) {
+            return Character(character.objects[id]);
+        }
+    }
+    
+    return;
+}
+
+
+exports.Character = Character;
+exports.findById = findById;
