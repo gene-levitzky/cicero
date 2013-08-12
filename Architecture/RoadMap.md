@@ -99,3 +99,7 @@ Priority is denoted by stars.
   * Player effectiveness, as measured by physical damange or magical resistance for example, would rise gradually and be imperceptible to the player. 
   * There should also be no explicit leveling system. Players may attempt to increase their rank with various factions at any point so that their skill level can be gauged by other players. However, these tests should not be conditioned on anything other than the player's capabilities (i.e., the tests should be available at all times and not should not be based on arbitrary factors such as the amount of experience the player has at the time).
   * Skills, i.e. active/passive traits, special maneuvres, etc, would also be gained in a hidden manner. If a player trains heavily with a sword, for example, he may acquire certain traits and skills based on that.
+* Faction driven gameplay.
+  * Anything can be a faction. A city. A guild. A bank. Players may start their own factions. 
+  * Much of the gameplay should focus around advancing the prestige of a faction. 
+  * A city's economy should be based on the progress of its central faction (the city itself), and the various factions that reside therein.
