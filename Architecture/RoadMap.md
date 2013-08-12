@@ -102,5 +102,5 @@ Priority is denoted by stars.
 * Faction driven gameplay.
   * Anything can be a faction. A city. A guild. A bank. Players may start their own factions. 
   * Much of the gameplay should focus around advancing the prestige of a faction. 
-  * A city's economy should be based on the progress of its central faction (the city itself), and the various factions that reside therein.
-  * Bottom-up civilization game.
+  * A city's economy should be based on the progress of its central faction (the city itself), and the various factions that reside therein.  
+* Bottom-up civilization game.
