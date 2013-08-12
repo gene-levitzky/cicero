@@ -12,10 +12,23 @@
           @import "/css/bootstrap.min.css";
           @import "/css/global.css";
         </style>
+        <style>
+        #display {
+          height: 562px;
+          margin-top: 75px;
+          width: 1000px;
+        }
+        #game-canvas {
+          background: #000;
+          width: 100%;
+          height: 100%;
+        }
+        </style>
         <title>Cicero</title>
     </head>
     <body>
-        <div id="wrapper">
+        <div id="display" class="container">
+            <canvas id="game-canvas"></canvas>
         </div>
     </body>
 </html>

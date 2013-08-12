@@ -18,7 +18,8 @@ var User = function (userObject)
         if (typeof this.id !== "undefined") {
             user.objects[this.id] = this;
         }
-        else {
+        else { 
+            console.log("HERE");
             this.id = user.topID;
             user.topID++;
             user.objects[this.id] = this;
@@ -39,8 +40,8 @@ var User = function (userObject)
         
         var userCharacters = userCharacterTable.findByUserId(this.id);
         
-        for (var cid in userCharacters) {
-            outList[cid] = characterTable.findById(cid);
+        for (var id in userCharacters) {
+            outList[id] = characterTable.findById(userCharacters[id].user);
         }        
         
         return outList;
@@ -54,7 +55,7 @@ var findByName = function(username) {
     
     for (var id in user.objects) {
         if (username === user.objects[id].username) {
-            return User(user.objects[id]);
+            return new User(user.objects[id]);
         }
     }
     
@@ -64,7 +65,10 @@ var findByName = function(username) {
 var findById = function(id) {
 
   var users = require("../database/user.json").objects;
-  return User(users[id]);
+  
+  if (typeof users[id] !== "undefined") {
+      return new User(users[id]);
+  }
 }
 
 

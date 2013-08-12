@@ -1,21 +1,12 @@
 body {
-  background-image: -webkit-linear-gradient(top, #77c7eb, #4bb5e4);
-}
-
-.container {
-  background-image: -webkit-linear-gradient(left, rgba(0,0,0,.1), rgba(0,0,0,0));
-  border-left: 1px solid #eee;
-  border-right: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-  border-radius: 5px;
-  display: inline-block;
+  //background-image: -webkit-linear-gradient(top, #77c7eb, #4bb5e4);
+  background: #fafafa;
+  color: #333;
 }
 
 #wrapper {
-  background: rgba(0,0,0,.1);
-  border-top-left-radius: 50px;
-  border-bottom-right-radius: 50px;
-  color: #eee;
+  border-top: none;
+  height: 1000px;
   margin-left: auto;
   margin-right: auto;
   padding: 50px;
@@ -28,21 +19,24 @@ body {
   content: "";
 }
 
+.container {
+  background-image: -webkit-linear-gradient(left, rgba(0,0,0,.1), rgba(0,0,0,0));
+  border: 1px solid #000;
+  border-radius: 1px;
+  font-family: Ubuntu, sans-serif, monospace;
+  //display: inline-block;
+  width: auto;
+}
+
 .heading {
-  color: #eee;
-  font-family: "Calibri", sans-serif, monospace;
-  font-size: 94px;
-  font-style: oblique;
+  clear: both;
+  font-family: "Open Sans", sans-serif, monospace;
+  font-size: 48px;
   font-variant: small-caps;
-  height: 100px;
+  height: 1em;
   width: 800px;
-  
-  border-top: #eee solid 1px;
-  border-left: #eee solid 1px;
-  border-right: #eee solid 1px;
-  border-radius: 5px;
-  
   padding-top: .5em;
+  text-align: center;
 }
             
 input.wide {

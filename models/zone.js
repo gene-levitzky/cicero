@@ -61,7 +61,8 @@ function createMap(mapFile) {
         // Current character
         var c = data.charAt(i);
         // Go to next row
-        if ("\n" === c) {
+        if ('\r' === c) {
+            i++;
             y++;
             x = 0;
             continue;

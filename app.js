@@ -68,6 +68,11 @@ app.get('/index', function(req, res) {
 });
 
 
+app.get('/cicero', function(req, res) {
+    ciceroView(req, res);
+});
+
+
 app.get('/home', function(req, res) {
     homeView(req, res);
 });
@@ -105,6 +110,12 @@ app.get('/login', function(req, res) {
 app.get('/about', function(req, res) {
     res.render('about');
 });
+
+
+function ciceroView(req, res) {
+    res.render('cicero');
+}
+
 
 function homeView(req, res) {
 
@@ -150,9 +161,9 @@ function homeView(req, res) {
             });
             return;
         }
-        
+
         // Username already taken
-        if (name.findByName(name)) {
+        if (typeof users.findByName(name) !== "undefined") {
             res.render('login', {   
                 'name'                : metadata.name, 
                 'name'                : metadata.name, 
@@ -164,10 +175,10 @@ function homeView(req, res) {
             return;
         }
         
-        var user = users.User({
+        var user = new users.User({
             "username" : name, 
             "password" : sha1.hash(pass),
-        );
+        });
         var id = user.save();
         
         res.cookie('userId', id, { maxAge: 900000, httpOnly: false });
@@ -186,7 +197,7 @@ function homeView(req, res) {
         var pass = req.param('pass');
     
         user = users.findByName(name);
-        
+        console.log(user.id);
         // User does not exist
         if (isUndefined(user)) {
             res.render('login', {   
@@ -212,6 +223,7 @@ function homeView(req, res) {
         
         res.cookie('userId', user.id, { maxAge: 900000, httpOnly: false });
         res.render('home', {
+            'id'         : user.id,
             'user'       : user, 
             'characters' : user.getCharacters(), 
             'name'       : metadata.name, 
@@ -229,7 +241,7 @@ function indexView(req, res) {
 
     var userId = req.cookies.userId;
     
-    if (typeof userId !== "undefined") {
+    if (!isUndefined(userId)) {
         user = users.findById(userId);
         if (!isUndefined(user)) {
           res.render('home', {

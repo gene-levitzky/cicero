@@ -42,7 +42,7 @@ var Character = function (characterObject)
 var findById = function(id) {
 
     var characters = require("../database/character.json").objects;
-    return Character(characters[id]);
+    return new Character(characters[id]);
 }
 
 var findByName = function(name) {
@@ -51,7 +51,7 @@ var findByName = function(name) {
     
     for (id in character.objects) {
         if (name === character.objects[id]) {
-            return Character(character.objects[id]);
+            return new Character(character.objects[id]);
         }
     }
     

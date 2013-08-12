@@ -46,7 +46,6 @@ exports.findByUserId = function(id)
       
       var userCharacter = userCharacters[ucid];
       if (userCharacter.user == id) {
-          console.log("in findbyuser   " + userCharacter.user + " -- " + id);
           outList[ucid] = userCharacter;
       }
   }

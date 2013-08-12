@@ -1,6 +1,5 @@
 <html>
     <head>
-        <link rel="stylesheet" href="/css/global.css" />
         <style type="text/css" title="currentStyle">
           @import "/css/bootstrap.min.css";
           @import "/css/global.css";
@@ -9,12 +8,15 @@
             #user-action {
               clear: both;
               margin-top: 50px;
+              padding: 25px;
+              width: 700px;
             }
             #login {
               float: left;
+              margin-right: 100px;
             }
             #signup {
-              float: right;
+              float: left;
             }
         </style>
         <script src="/javascript/jquery-1.10.1.js"></script>
@@ -25,11 +27,11 @@
     </head>
 
     <body>
-        <div id="wrapper">
-            <div class="heading">
+        <div class="container" id="wrapper">
+            <div class="heading container">
                 <%= name %>
             </div>
-            <div id="user-action">
+            <div class="container" id="user-action">
                 <div id="login">
                     <h2>Log in</h2>
                     <form action="/home" method="POST">
