@@ -8,6 +8,10 @@ The following is both an outline for the architecture of the project as well as 
 
 The list of public functions and their behavior of a particular object.
 
+#### Character
+
+A user's in-game character. A user may have more than one character, but each character can belong to only one user. Corresponds to the `character` model.
+
 #### Client
 
 Generic term for anyone using our application. Often used as a contrast to the server, i.e., anything done client-side is executed by the client's browser and not by our server.
@@ -16,9 +20,9 @@ Generic term for anyone using our application. Often used as a contrast to the s
 
 A client with an account on the website. Corresponds to the `user` model.
 
-#### Character
+#### Player
 
-A user's in-game character. A user may have more than one character, but each character can belong to only one user. Corresponds to the `character` model.
+A player is a user who is currently logged in as one of his characters. "Player" is simply a term to denote the person controlling a `character` model.
 
 ## Client - Server Communication
 
