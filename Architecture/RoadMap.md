@@ -1,12 +1,16 @@
-# Road Map for Project Solstice
+# Road Map for Project Cicero
 
-The following is both an outline for the architecture of our project as well as a list of things that need to be done.
+The following is both an outline for the architecture of the project as well as a list of things that need to be done.
 
 ## Glossary
 
 #### API (Application Program Interface)
 
 The list of public functions and their behavior of a particular object.
+
+#### Character
+
+A user's in-game character. A user may have more than one character, but each character can belong to only one user. Corresponds to the `character` model.
 
 #### Client
 
@@ -18,11 +22,11 @@ A client with an account on the website. Corresponds to the `user` model.
 
 #### Player
 
-A user who has an active character in the game. Corresponds to the `player` model, not the `character` model.
+A player is a user who is currently logged in as one of his characters. "Player" is simply a term to denote the person controlling a `character` model.
 
 ## Client - Server Communication
 
-Clients will log in and perform typical web application functions through standard HTTP GET/POST requests as we've done so far. However, the game itself will communicate with the server through WebSockets which don't require page reloads and maintain constant communication with the server, which is an essential feature for an MMO. 
+Clients will log in and perform typical web application functions through standard HTTP GET/POST requests. However, the game itself will communicate with the server through WebSockets which don't require page reloads and maintain constant communication with the server, which is an essential feature for an MMO. 
 
 ### Game Sessions
 
@@ -32,7 +36,7 @@ The Client/Server Game Session pair will maintain communication between each oth
 
 ### Security
 
-As soon as a user logs in to our website, they will be provided with a cookie that stores their usename, their logged in status, and some encrypted key that can be verified by our server to authenticate the user. During gameplay, we'll be using WebSockets, so security shouldn't be a concern.
+As soon as a user logs in to our website, they will be provided with a cookie that stores their usename, their logged in status, and some encrypted key that can be verified by our server to authenticate the user. During gameplay we'll be using WebSockets, which use encrypted communication, so security shouldn't be a concern.
 
 ### *More To Come*
 
@@ -70,9 +74,6 @@ At the zone level, the update function might update the coordinate positions of 
 
 ## To Do List
 
-* APIs for Game object, Zone object, GameMode object, GameSession Object (server and client).**
-* A game user interface page.*
-* Admin page that users get taken to with the proper login information.*
 * Game mechanics design.
   * Character development**
   * Combat*
@@ -93,4 +94,13 @@ Priority is denoted by stars.
 * Boat
   * Boat combat?
 * Potency - players' actions more potent after training (grinding), less so after KOing.
-* Shops and businesses
+* Player run shops and businesses.
+* Obscured statistics on everything (no implementation of any game mechanic should be explicit). 
+  * Player effectiveness, as measured by physical damange or magical resistance for example, would rise gradually and be imperceptible to the player. 
+  * There should also be no explicit leveling system. Players may attempt to increase their rank with various factions at any point so that their skill level can be gauged by other players. However, these tests should not be conditioned on anything other than the player's capabilities (i.e., the tests should be available at all times and not should not be based on arbitrary factors such as the amount of experience the player has at the time).
+  * Skills, i.e. active/passive traits, special maneuvres, etc, would also be gained in a hidden manner. If a player trains heavily with a sword, for example, he may acquire certain traits and skills based on that.
+* Faction driven gameplay.
+  * Anything can be a faction. A city. A guild. A bank. Players may start their own factions. 
+  * Much of the gameplay should focus around advancing the prestige of a faction. 
+  * A city's economy should be based on the progress of its central faction (the city itself), and the various factions that reside therein.  
+* Bottom-up civilization game.
