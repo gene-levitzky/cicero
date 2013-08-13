@@ -2,6 +2,7 @@
  *  Module dependencies. Java "import" equivalent.
  */
 var express = require('express')
+    , game  = require('./modules/Game')
     , http  = require('http')
     , io    = require('socket.io')
     , path  = require('path')
@@ -280,6 +281,7 @@ sio.on('connection', function (socket) {
     
     
     socket.on('i-am', function (data) {
+        
         if (isUndefined(data)) {
             // TODO
             socket.emit('not-logged-in');
@@ -301,8 +303,8 @@ sio.on('connection', function (socket) {
                 }
                 else {
                 
-                    if ('new-character' == data.service) {
-                        socket.emit('mode-switch', {"mode":"character-creation"});
+                    if ('login' == data.service) {
+                        game.createGameSession(user, socket);
                     }
                     else {
                         // TODO

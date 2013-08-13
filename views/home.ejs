@@ -71,7 +71,7 @@
             <% if (newUser) { %>
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Welcome to Cicero, <%= user.username %>!</strong>
+                    <strong>Welcome to <%= name %>, <%= user.username %>!</strong>
                 </div>
             <% } %>
             <ul class="nav nav-tabs" id="home-nav">
@@ -105,7 +105,7 @@
                             <tr>
                                 <th><%= characters[id].name %></th>
                                 <th><%= id %></th>
-                                <th><a href="#" class="btn btn-success">Login</a></th>
+                                <th><a href="/cicero" class="btn btn-success">Login</a></th>
                                 <th><a href="#" class="btn btn-danger">Delete</a></th>
                             </tr>
                         <% } %>

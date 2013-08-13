@@ -2,12 +2,12 @@
 /*
  * Zone models.
  */
-var ZoneModel = require('./models/Zone');
+var ZoneModel = require('../models/zone');
 
 /*
  * Game interface wrapper for Zone models.
  */
-var ZoneInstance = require('./modules/ZoneInstance');
+var ZoneInstance = require('../modules/ZoneInstance');
 
 /*
  * Dictionary of all active Zone Instances
@@ -24,7 +24,7 @@ var intervalId;
  * @return {string} Returns an empty string if timer started successfully, or
  *                  an error message otherwise.
  */
-exports.run = function() {
+var run = function() {
     
     if (typeof intervalId === "undefined") {
         intervalId = setInterval(update, 10);
@@ -40,7 +40,7 @@ exports.run = function() {
  * @return {string} Returns an empty string if timer stopped successfully, or
  *                  an error message otherwise.
  */
-exports.stop = function() {
+var stop = function() {
  
     if (typeof intervalId !== "undefined") {
         clearInterval(intervalId);
@@ -66,7 +66,7 @@ function update() {
  * Initializes game resources such as zones.
  * NOTE: Must be called before first call to ``run``.
  */
-function init() {
+var init = function() {
     
     var allZones = ZoneModule.all();
     
@@ -85,11 +85,14 @@ function init() {
  * @return {boolean} Returns empty string if game session added successfully, or
  *                   an error message otherwise.
  */
-exports.createGameSession = function(character, socket) {
+var createGameSession = function(character, socket) {
     
     var zone = zones[character.location.zone];
     
     if (typeof zone === "undefined") {
+        //
+        ///// PROBLEM IS HERE
+        // 
         return "Invalid zone.";
     }
     
@@ -111,7 +114,7 @@ exports.createGameSession = function(character, socket) {
  * @return {boolean} Returns empty string if character added successfully or an
  *                   error message otherwise.
  */
-exports.destroyGameSession = function(cid) {
+var destroyGameSession = function(cid) {
     
     // Current Zone of character
     var zone;
@@ -142,7 +145,7 @@ exports.destroyGameSession = function(cid) {
  * @return {string} Returns an empty string if character transferred
  *                  successfully, or an error message otherwise.
  */
-exports.transferCharacter = function(gameSession, originZoneInstance, destinationId, x, y) {
+var transferCharacter = function(gameSession, originZoneInstance, destinationId, x, y) {
 
     if (!(destinationId in zones)) {
         return "Invalid destination";
@@ -169,3 +172,9 @@ exports.transferCharacter = function(gameSession, originZoneInstance, destinatio
     
     return "";
 }
+
+exports.run = run;
+exports.stop = stop;
+exports.init = init;
+exports.createGameSession = createGameSession;
+exports.destroyGameSession = destroyGameSession;

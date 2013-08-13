@@ -64,12 +64,19 @@ Stamina - Action points used during combat to perform physical moves and to a mu
 
 ### Disciplines
 
-Physical Shield
 
-Evasion Shield
+### NPC Behavior
 
-
-
+* NPCs will run in iterations, where each iteration occurs after an update cycle. 
+* NPCs will have different modes depending on the type of NPC.
+* Fightable NPCs (mobs) will have the following modes:
+  * Roam: random free roam from point of origin.
+  * Homing: Return to point of origin.
+  * Combat: Fight with a PC (maybe other NPC?)
+* Non-fightable NPCs will have the following modes:
+  * Travel: travel between designated locations. Can be dynamic of locations are set based on some in-game criteria.
+  * Homing: Return to point of origin.
+  * Interact: Interact with PC. Can vary depending on type of NPC. For example, `Interact` mode can involve an economic transaction, or a quest cutscene transaction.
 
 
 

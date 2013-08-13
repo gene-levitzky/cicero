@@ -2,7 +2,7 @@
 /*
  * Server-side game session module.
  */
-var GameSession = require("./modules/ServerGameSession");
+var GameSession = require("./ServerGameSession");
 
 exports.ZoneInstance = function(zone, game) {
 
@@ -77,7 +77,7 @@ exports.ZoneInstance = function(zone, game) {
         }
         
         // Create and add game session for user
-        var gameSession = GameSession.ServerGameSession(character, socket, this);
+        var gameSession = new GameSession.ServerGameSession(character, socket, this);
         this.gameSessions[character.id] = gameSession;
         
         // Add to coordinates

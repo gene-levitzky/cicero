@@ -8,8 +8,11 @@ var User = function (userObject)
     this.class = "User";
 
     this.id = userObject.id;
+    
     this.username = userObject.username;
     this.password = userObject.password;
+    
+    this.location = userObject.location;
     
     this.save = function () {
 
