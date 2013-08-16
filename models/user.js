@@ -2,79 +2,41 @@
 // Used for saving to permanent file
 var fs = require("fs");
 
+var model = require("./AbstractModel");
 
-var User = function (userObject) 
-{    
-    this.class = "User";
-
-    this.id = userObject.id;
-    
-    this.username = userObject.username;
-    this.password = userObject.password;
-    
-    this.location = userObject.location;
-    
-    this.save = function () {
-
-        var user = require("../database/user.json");
-        
-        if (typeof this.id !== "undefined") {
-            user.objects[this.id] = this;
-        }
-        else { 
-            console.log("HERE");
-            this.id = user.topID;
-            user.topID++;
-            user.objects[this.id] = this;
-        }
-                             
-        fs.writeFile("database/user.json", JSON.stringify(user), function(err){
-            if(err){throw err};
-        });
-        
-        return this.id;
-    }
+var User = new model.AbstractModel("user", function (userObject) 
+{       
+    User.make(this, userObject);
     
     this.getCharacters = function () {
         
-        var userCharacterTable = require("./userCharacter");
-        var characterTable = require("./character");
+        var UserCharacter = require("./userCharacter").UserCharacter;
+        var Character = require("./character").Character;
         var outList = [];
         
-        var userCharacters = userCharacterTable.findByUserId(this.id);
+        var userCharacters = UserCharacter.findByUserId(this.id);
         
         for (var id in userCharacters) {
-            outList[id] = characterTable.findById(userCharacters[id].user);
+            outList[id] = Character.findById(userCharacters[id].user);
         }        
-        
+
         return outList;
     }
-}
+});
 
-
-var findByName = function(username) {
+User.findByName = function(username) {
 
     var user = require("../database/user.json");
     
     for (var id in user.objects) {
         if (username === user.objects[id].username) {
-            return new User(user.objects[id]);
+            return new User.construct(user.objects[id]);
         }
     }
     
     return;
 }
 
-var findById = function(id) {
+console.log(User);
 
-  var users = require("../database/user.json").objects;
-  
-  if (typeof users[id] !== "undefined") {
-      return new User(users[id]);
-  }
-}
-
-
-exports.findById = findById;
-exports.findByName = findByName;
 exports.User = User;

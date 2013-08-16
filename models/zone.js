@@ -1,45 +1,20 @@
 
 var fs = require("fs");
 
-var Zone = function(zoneObject) 
-{
-    this.class = "Zone";
-    
-    this.id = zoneObject.id;
-    this.mapFile = zoneObject.mapFile;
-    this.name = zoneObject.name;
-    
-    if (zoneObject instanceof Zone) {
-        this.map = zoneObject.map;
+var model = require("./AbstractModel");
+
+var Zone = new model.AbstractModel("zone", function(zoneObject) 
+{    
+    if (zoneObject.class !== "zone") {
+        zoneObject.map = createMap(zoneObject.mapFile); 
     }
-    else {
-        this.map = createMap(zoneObject.mapFile); 
-    }
+    
+    Zone.make(this, zoneObject);
     
     this.get = function(x, y) {
         return this.map[x][y];
     }
-    
-    this.save = function() {
-        
-        var zone = require("../database/zone.json");
-        
-        if (typeof this.id !== 'undefined') {
-            zone.objects[this.id] = this;
-        }
-        else {
-            this.id = zone.topId;
-            zone.topId++;
-            zone.objects[this.id] = this;
-        }
-        
-        fs.writeFile("database/zone.json", JSON.stringify(zone), function(err){
-            if(err){throw err};
-        });
-        
-        return this.id;
-    }
-}
+});
 
 
 /**
@@ -78,19 +53,17 @@ function createMap(mapFile) {
 }
 
 
-var findByName = function(name) {
+Zone.findByName = function(name) {
     
     var zone = require("../database/zone.json");
     
     for (id in zone.objects) {
         if (name === zone.objects[id]) {
-            return Zone(zone.objects[id]);
+            return new Zone.construct(zone.objects[id]);
         }
     }
     
     return;
 }
 
-
-exports.findByName = findByName;
 exports.Zone = Zone;

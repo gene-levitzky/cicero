@@ -1,43 +1,43 @@
 // "fs" = file system
 var fs = require("fs");
 
-exports.modelName = "AbstractModel";
-exports.constructor = undefined;
+exports.AbstractModel = function(modelName, construct) {
 
-var make = function (modelObject, modelFields) 
-{    
-    modelObject.class = exports.modelName;
+    this.modelName = modelName;
+    this.construct = construct;
     
-    for (var field in modelFields) {
-        modelObject[field] = modelFields[field];
-    }
+    this.make = function (modelObject, modelFields) {    
     
-    modelObject.save = function () {
-        
-        var abstractModel = require("../database/" + exports.modelName + ".json");
-        
-        if (typeof modelObject.id === "undefined") {
-            modelObject.id = abstractModel.topID;
-            abstractModel.topID++;
+        modelObject.class = this.modelName;
+
+        for (var field in modelFields) {
+            modelObject[field] = modelFields[field];
         }
-
-        abstractModel.objects[modelObject.id] = modelObject;
-        fs.writeFile("../database/" + exports.modelName + ".json", JSON.stringify(abstractModel), function(err){
-            if(err){throw err};
-        });
         
-        return modelObject.id;
+        modelObject.save = function () {
+        
+            var abstractModel = require("../database/" + modelObject.class + ".json");
+            
+            if (typeof modelObject.id === "undefined") {
+                modelObject.id = abstractModel.topID;
+                abstractModel.topID++;
+            }
+
+            abstractModel.objects[modelObject.id] = modelObject;
+            fs.writeFile("./database/" + modelObject.class + ".json", JSON.stringify(abstractModel), function(err){
+                if(err){throw err};
+            });
+            
+            return modelObject.id;
+        }
+    }
+
+    this.findById = function(id) {
+
+      var abstractModels = require("../database/" + this.modelName + ".json").objects;
+      
+      if (typeof abstractModels[id] !== "undefined") {
+          return new this.construct(abstractModels[id]);
+      }
     }
 }
-
-var findById = function(id) {
-
-  var abstractModels = require("../database/" + exports.modelName + ".json").objects;
-  
-  if (typeof abstractModels[id] !== "undefined") {
-      return new exports.constructor(abstractModels[id]);
-  }
-}
-
-exports.make = make;
-exports.findById = findById;

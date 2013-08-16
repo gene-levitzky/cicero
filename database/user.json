@@ -1,1 +1,1 @@
-{"topID":1,"objects":{"0":{"class":"User","id":0,"username":"admin","password":"f224e69777df48e8e6c83801bc4d60afb37442dd"}}}
+{"topID":1,"objects":{"0":{"class":"user","username":"admin","password":"f224e69777df48e8e6c83801bc4d60afb37442dd","id":0}}}

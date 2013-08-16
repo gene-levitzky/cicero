@@ -2,13 +2,13 @@
  *  Module dependencies. Java "import" equivalent.
  */
 var express = require('express')
-    , characters = require('./models/character')
+    , Character = require('./models/character').Character
     , game = require('./modules/Game')
     , http = require('http')
     , io = require('socket.io')
     , path = require('path')
     , sha1 = require('SHA1').getSha1()
-    , users = require('./models/user');
+    , User = require('./models/user').User;
 
 /**
  *  Configuration and Middleware.
@@ -90,7 +90,7 @@ app.get('/new-character', function (req, res) {
     var userId = req.cookies.userId;
     
     if (!isUndefined(userId)) {
-        var user = users.findById(userId);
+        var user = User.findById(userId);
         if (!isUndefined(user)) {
             res.render('new-character', {
                 'user': user, 
@@ -165,7 +165,7 @@ function homeView(req, res) {
         }
 
         // Username already taken
-        if (typeof users.findByName(name) !== "undefined") {
+        if (typeof User.findByName(name) !== "undefined") {
             res.render('login', {   
                 'name'                : metadata.name, 
                 'name'                : metadata.name, 
@@ -177,7 +177,7 @@ function homeView(req, res) {
             return;
         }
         
-        var user = new users.User({
+        var user = new User.construct({
             "username" : name, 
             "password" : sha1.hash(pass),
         });
@@ -198,8 +198,8 @@ function homeView(req, res) {
         var name = req.param('name');
         var pass = req.param('pass');
     
-        user = users.findByName(name);
-        console.log(user.id);
+        user = User.findByName(name);
+
         // User does not exist
         if (isUndefined(user)) {
             res.render('login', {   
@@ -244,7 +244,7 @@ function indexView(req, res) {
     var userId = req.cookies.userId;
     
     if (!isUndefined(userId)) {
-        user = users.findById(userId);
+        user = User.findById(userId);
         if (!isUndefined(user)) {
           res.render('home', {
               'user'       : user, 
@@ -291,7 +291,7 @@ sio.on('connection', function (socket) {
         }
         else {
         
-            var user = users.findById(data.userId);
+            var user = User.findById(data.userId);
             
             if (isUndefined(user)) {
                 console.log("INVALID USER");
@@ -305,8 +305,7 @@ sio.on('connection', function (socket) {
                 else {
                 
                     if ('login' == data.service) {
-                        var character = characters.findById(0);
-                        console.log(character);
+                        var character = Character.findById(0);
                         game.createGameSession(character, socket);
                     }
                     else {

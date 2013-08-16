@@ -11,12 +11,9 @@ model.constructor = function(testObject) {
     }
 }
 
-//var test = new model.constructor({"desc":"THIS IS ANOTHER TEST"});
+//model.constructor = Test;
+
+//var test = new Test({"desc":"THIS IS A TEST"});
 var test = model.findById(0);
 
-for (field in test) {
-    console.log(field);
-}
-
-test.save();
-test.print();
+console.log(test instanceof model.findById);
