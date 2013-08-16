@@ -2,11 +2,12 @@
  *  Module dependencies. Java "import" equivalent.
  */
 var express = require('express')
-    , game  = require('./modules/Game')
-    , http  = require('http')
-    , io    = require('socket.io')
-    , path  = require('path')
-    , sha1  = require('SHA1').getSha1()
+    , characters = require('./models/character')
+    , game = require('./modules/Game')
+    , http = require('http')
+    , io = require('socket.io')
+    , path = require('path')
+    , sha1 = require('SHA1').getSha1()
     , users = require('./models/user');
 
 /**
@@ -304,7 +305,9 @@ sio.on('connection', function (socket) {
                 else {
                 
                     if ('login' == data.service) {
-                        game.createGameSession(user, socket);
+                        var character = characters.findById(0);
+                        console.log(character);
+                        game.createGameSession(character, socket);
                     }
                     else {
                         // TODO

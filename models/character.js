@@ -11,6 +11,7 @@ var Character = function (characterObject)
     this.id = characterObject.id;
     this.name = characterObject.name;
     this.attributes = characterObject.attributes
+    this.location = characterObject.location;
     
     this.save = function () {
 
