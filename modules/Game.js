@@ -68,8 +68,10 @@ function update() {
  */
 var init = function() {
     
-    for (zid in Zone.all()) {        
-        zones[zid] = new ZoneInstance.ZoneInstance(allZones[zid], this);
+    var zoneModels = Zone.all();
+    
+    for (zid in zoneModels) {        
+        zones[zid] = new ZoneInstance.ZoneInstance(zoneModels[zid], this);
     }
 }
  

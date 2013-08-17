@@ -44,7 +44,7 @@ exports.ServerGameSession = function(character, socket) {
     /////////////////////
     // SOCKET HANDLING //
     /////////////////////
-    socket.emit('mode-switch', 'title');
+    socket.emit('mode-switch', {mode: 'title'});
     
     this.socket.on('key-event', function(data) {
         mode.keyListener(data);

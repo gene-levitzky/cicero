@@ -1,4 +1,4 @@
-var __mode = __TITLE_MODE;
+var mode = __EXPLORE;
 
 var socket = io.connect('http://localhost');
 
@@ -53,7 +53,7 @@ socket.on('who-are-you?', function (data) {
  */
 socket.on('update', function(data) {
     
-    __mode.update(data);
+    mode.update(data);
 });
  
 
@@ -62,5 +62,5 @@ socket.on('update', function(data) {
  */
 socket.on('mode-switch', function (data) {
     
-    __mode.switchTo(data.mode);
+    mode.switchTo(data.mode);
 });

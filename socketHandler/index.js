@@ -1,8 +1,8 @@
 
-var Character = require('../../models/character').Character
-    , game    = require('../Game')
-    , H__     = require('../HelperFunctions')
-    , User    = require('../../models/user').User;
+var Character = require('../models/character').Character
+    , game    = require('../modules/Game')
+    , H__     = require('../modules/HelperFunctions')
+    , User    = require('../models/user').User;
 
     
 exports.init = function(sio) {

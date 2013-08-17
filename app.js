@@ -6,8 +6,8 @@ var express         = require('express')
     , http          = require('http')
     , H__           = require('./modules/HelperFunctions')
     , io            = require('socket.io')
-    , routes        = require('./modules/routes')
-    , socketHandler = require('./modules/socketHandler');
+    , routes        = require('./routes')
+    , socketHandler = require('./socketHandler');
 
 /**
  *  Configuration and Middleware.
@@ -45,6 +45,12 @@ var server = http.createServer(app).listen(app.get('port'), function() {
 
 
 /*
+ * Run the Game server
+ */
+game.init();
+
+
+/*
  * Route Handling
  */
 app.get('/', routes.indexView);
@@ -55,7 +61,6 @@ app.post('/home', routes.homeView);
 app.get('/index', routes.indexView);
 app.get('/login', routes.loginView);
 app.get('/new-character', function (req, res) {});
-
 
 
 /*

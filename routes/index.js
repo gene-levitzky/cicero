@@ -1,15 +1,15 @@
 
-var metadata = require("../../database/metadata.json");
+var metadata = require("../database/metadata.json");
 
-var Character = require('../../models/character').Character
-    , game    = require('../Game')
-    , __H     = require('../HelperFunctions')
+var Character = require('../models/character').Character
+    , game    = require('../modules/Game')
+    , __H     = require('../modules/HelperFunctions')
     , sha1    = require('SHA1').getSha1()
-    , User    = require('../../models/user').User;
+    , User    = require('../models/user').User;
 
     
 exports.ciceroView = function(req, res) {
-    res.render('cicero');
+    res.render('cicero', {title: metadata.name});
 }
 
 
