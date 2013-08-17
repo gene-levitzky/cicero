@@ -2,7 +2,7 @@
 /*
  * Zone models.
  */
-var ZoneModel = require('../models/zone');
+var Zone = require('../models/zone').Zone;
 
 /*
  * Game interface wrapper for Zone models.
@@ -14,9 +14,9 @@ var ZoneInstance = require('../modules/ZoneInstance');
  */
 var zones = {};
 
- /*
-  * The timer event ID
-  */
+/*
+ * The timer event ID. Is overriden every time ``run`` is called.
+ */
 var intervalId;
  
 /**
@@ -68,12 +68,8 @@ function update() {
  */
 var init = function() {
     
-    var allZones = ZoneModule.all();
-    
-    for (zid in allZones) {
-        
-        zones[zid] = ZoneInstance.ZoneInstance(allZones[zid], this);
-        zones[zid].init(); 
+    for (zid in Zone.all()) {        
+        zones[zid] = new ZoneInstance.ZoneInstance(allZones[zid], this);
     }
 }
  
@@ -90,9 +86,6 @@ var createGameSession = function(character, socket) {
     var zone = zones[character.location.zone];
     
     if (typeof zone === "undefined") {
-        //
-        ///// PROBLEM IS HERE
-        // 
         return "Invalid zone.";
     }
     

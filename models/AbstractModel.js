@@ -40,4 +40,16 @@ exports.AbstractModel = function(modelName, construct) {
           return new this.construct(abstractModels[id]);
       }
     }
+    
+    this.all = function() {
+        
+        var models = require("../database/" + this.modelName + ".json").objects;
+        var out = {};
+        
+        for (id in models) {
+            out[id] = new this.construct(models[id]);
+        }
+        
+        return out;
+    }
 }

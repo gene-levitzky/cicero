@@ -26,27 +26,34 @@ var Zone = new model.AbstractModel("zone", function(zoneObject)
 function createMap(mapFile) {
     
     var map = {};
-    
-    var x = 0;
-    var y = 0;
-    
+       
     var data = fs.readFileSync(mapFile, 'utf8');
+
+    var layers = data.split('\n\r');
+    console.log(layers.length);
+    for (var i = 0; i < layers.length; i++) {
     
-    for (var i = 0; i < data.length; i++) {
-        // Current character
-        var c = data.charAt(i);
-        // Go to next row
-        if ('\r' === c) {
-            i++;
-            y++;
-            x = 0;
-            continue;
+        var x = 0;
+        var y = 0;
+        
+        map[i] = {};
+    
+        for (var j = 0; j < data.length; j++) {
+            // Current character
+            var c = data.charAt(j);
+            // Go to next row
+            if ('\r' === c) {
+                j++;
+                y++;
+                x = 0;
+                continue;
+            }
+            // Check to make sure this column exists and add it if it doesn't
+            if (typeof map[i][x] === 'undefined') {
+                map[i][x] = {};
+            }
+            map[i][x++][y] = data.charAt(j);
         }
-        // Check to make sure this column exists and add it if it doesn't
-        if (typeof map[x] === 'undefined') {
-            map[x] = {};
-        }
-        map[x++][y] = data.charAt(i);
     }
     
     return map;

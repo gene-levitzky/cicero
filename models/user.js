@@ -37,6 +37,4 @@ User.findByName = function(username) {
     return;
 }
 
-console.log(User);
-
 exports.User = User;
