@@ -11,8 +11,28 @@ var Zone = new model.AbstractModel("zone", function(zoneObject)
     
     Zone.make(this, zoneObject);
     
+    /**
+     * Returns a list of tiles, in order, for the given coordinate.
+     *
+     * @param {int} `x` The x-coordinate.
+     * @param {int} `y` The y-coordinate.
+     *
+     * @return {object} A list of tiles at the given coordinate.
+     */
     this.get = function(x, y) {
-        return this.map[x][y];
+        
+        var out = {};
+        
+        for (layerId in this.map) {
+            if (typeof this.map[layerId][x] == 'undefined') {
+                out[layerId] = '.'; // give it a 'blank' tile
+            }
+            else {
+                out[layerId] = this.map[layerId][x][y];
+            }
+        }
+        
+        return out;
     }
 });
 

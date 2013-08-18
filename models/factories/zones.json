@@ -1,6 +1,6 @@
 {
     "0": {
-        "name"    : "Jaieus Forest",
-        "mapFile" : "database/maps/JaieusForest.cmap"
+        "name"    : "test zone",
+        "mapFile" : "database/maps/test_zone.cmap"
     }
 }

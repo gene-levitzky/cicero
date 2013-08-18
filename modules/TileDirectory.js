@@ -7,7 +7,7 @@
  *
  * @param {string} `background` The background color of this tile.
  *
- *  @param {object} `enemies` An index of {enemy, probability} pairs. The
+ *  @param {object} `enemies` An index of (enemy, probability) pairs. The
  *                            probability specifies the odds of this enemy
  *                            spawning over another. The probability must be
  *                            expressed as a decimal between 1 and 0 inclusive.
@@ -42,18 +42,76 @@
  *    @param {int} `width`     The width of this polygon. Unis are in percent 
  *                             of the tile size. Has no effect if `shape` is 
  *                             set to "polygon".
- *    @param {int} `x`         An index of the x-coordinates of the polygon's
+ *    @param {object} `x`      A dict of the x-coordinates of the polygon's
  *                             vertices. Set as a single number (not an object)
  *                             if `shape` is set to anything other than 
  *                             "polygon".
- *    @param {int} `y`         An index of the y-coordinates of the polygon's
+ *    @param {object} `y`      An dict of the y-coordinates of the polygon's
  *                             vertices. Set as a single number (not an object)
  *                             if `shape` is set to anything other than 
  *                             "polygon".
  *
  */
-                              
 
-exports._lawnGrass = {
-    "background": "green",
+var tileDirectory = {
+
+    // A blank tile
+    "blank": function() {
+        this.background = {
+            r: 0, 
+            g: 0, 
+            b: 0, 
+            a: 0
+        };
+    },
+    
+    // Error tile
+    "error": function() {
+        this.background = {
+            r: 256,
+            g: 0,
+            b: 0,
+            a: 256
+        };
+    },
+    
+    "test zone": 
+    {
+        
+        "#": function() {
+            this.background = {
+                r: 0,
+                g: 256,
+                b: 0,
+                a: 256
+            };
+        },
+    },
+}
+
+exports.get = function(zone, symbols) {
+    
+    var tile = {
+        prev: undefined,
+        tile: {},
+        next: undefined,
+    };
+    var top = tile;
+    
+    for (var i in symbols) {
+    
+        if (typeof tileDirectory[zone] === 'undefined' || typeof tileDirectory[zone][symbols[i]] === 'undefined') {
+            return new tileDirectory['error']();
+        }
+        
+        tile.tile = new tileDirectory[zone][symbols[i]]();
+        tile.next = {
+            prev: tile,
+            tile: {},
+            next: undefined,
+        };
+        tile = tile.next;
+    }
+    
+    return top;
 }

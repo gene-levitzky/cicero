@@ -1,11 +1,10 @@
 
 var Character = require('../models/character').Character
-    , game    = require('../modules/Game')
     , H__     = require('../modules/HelperFunctions')
     , User    = require('../models/user').User;
 
-    
-exports.init = function(sio) {
+
+exports.init = function(sio, game) {
 
     sio.on('connection', function (socket) {
 
@@ -37,7 +36,8 @@ exports.init = function(sio) {
                         // Login requested
                         if ('login' == data.service) {
                             var character = Character.findById(0);
-                            game.createGameSession(character, socket);
+                            var result = game.createGameSession(character, socket);
+                            console.log(result);
                         }
                         else {
                             // Non-existent service requested

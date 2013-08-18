@@ -37,14 +37,13 @@ exports.ServerGameSession = function(character, socket) {
      * the user.
      * @param {object}  The update data to be pushed.
      */
-    this.update = function(data) {
+    this.update = function(data) {    
         socket.emit('update', data);
     }
-    
+     
     /////////////////////
     // SOCKET HANDLING //
     /////////////////////
-    socket.emit('mode-switch', {mode: 'title'});
     
     this.socket.on('key-event', function(data) {
         mode.keyListener(data);

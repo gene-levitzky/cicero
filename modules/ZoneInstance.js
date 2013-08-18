@@ -2,7 +2,8 @@
 /*
  * Server-side game session module.
  */
-var GameSession = require("./ServerGameSession");
+var GameSession = require('./ServerGameSession');
+var TileDirectory = require('./TileDirectory');
 
 exports.ZoneInstance = function(zone, game) {
 
@@ -148,11 +149,12 @@ exports.ZoneInstance = function(zone, game) {
      * users.
      */
     this.update = function() {
-    
-        for (gid in gameSessions) {
-            // #TODO 
-            // Insert data that will be pushed to users.
-            gameSessions[gid].update();
+
+        for (gid in this.gameSessions) {
+            var gameSession = this.gameSessions[gid];
+            var character = gameSession.getCharacter();
+            var environment = getImmediateSurroundings(character.location.x, character.location.y);
+            this.gameSessions[gid].update({environment: environment});
         }
     }
     
@@ -163,58 +165,86 @@ exports.ZoneInstance = function(zone, game) {
      * @return {string} Returns an empty string if character moved 
      *                  successfully, or an error message otherwise.
      */
-     this.moveCharacter = function(character, direction) {
+    this.moveCharacter = function(character, direction) {
+      
+      // The current position of the character
+      var x = character.location.x;
+      var y = character.location.y;
+      
+      // The character's movement speed (distance moved in one unit time)
+      var delta = character.attributes.speed;
+      
+      switch (direction.toLowerCase()) {
+      
+          case "north": 
+              if (typeof this.zone.get(x, y - delta) !== "undefined") {
+                  character.location.y -= delta;
+                  return "";
+              }
+              else {
+                  return "Unreachable destination."
+              }                
+              break;
+              
+          case "south": 
+              if (typeof this.zone.get(x, y + delta) !== "undefined") {
+                  character.location.y += delta;
+                  return "";
+              }
+              else {
+                  return "Unreachable destination."
+              }                
+              break;
+              
+          case "west": 
+              if (typeof this.zone.get(x - delta, y) !== "undefined") {
+                  character.location.x -= delta;
+                  return "";
+              }
+              else {
+                  return "Unreachable destination."
+              }                
+              break;
+              
+          case "east": 
+              if (typeof this.zone.get(x + delta, y) !== "undefined") {
+                  character.location.x += delta;
+                  return "";
+              }
+              else {
+                  return "Unreachable destination."
+              }                
+              break;
+              
+          default: return "Invalid direction."
+      }
+    }
+     
+    /**
+     * Retrieves a 21 x 21 tile grid, centered at the given coordinate.
+     * 
+     * @param {int} `x` The x-coordinate.
+     * @param {int} `y` The y-coordinate.
+     *
+     * @return {object} A 21-by-21 grid of tiles, centered at the (x, y).
+     */
+    function getImmediateSurroundings(x, y) {
         
-        // The current position of the character
-        var x = character.location.x;
-        var y = character.location.y;
+        var tiles = {};
+        var row = col = 0;
         
-        // The character's movement speed (distance moved in one unit time)
-        var delta = character.attributes.speed;
+        for (var i = x - 10; i < x + 10; i++) {
+            
+            tiles[row] = {};
         
-        switch (direction.toLowerCase()) {
-        
-            case "north": 
-                if (typeof this.zone.get(x, y - delta) !== "undefined") {
-                    character.location.y -= delta;
-                    return "";
-                }
-                else {
-                    return "Unreachable destination."
-                }                
-                break;
-                
-            case "south": 
-                if (typeof this.zone.get(x, y + delta) !== "undefined") {
-                    character.location.y += delta;
-                    return "";
-                }
-                else {
-                    return "Unreachable destination."
-                }                
-                break;
-                
-            case "west": 
-                if (typeof this.zone.get(x - delta, y) !== "undefined") {
-                    character.location.x -= delta;
-                    return "";
-                }
-                else {
-                    return "Unreachable destination."
-                }                
-                break;
-                
-            case "east": 
-                if (typeof this.zone.get(x + delta, y) !== "undefined") {
-                    character.location.x += delta;
-                    return "";
-                }
-                else {
-                    return "Unreachable destination."
-                }                
-                break;
-                
-            default: return "Invalid direction."
+            for (var j = y - 10; j < y + 10; j++) {
+                tiles[row][col++] = TileDirectory.get(zone.name, zone.get(i, j));
+            }
+            
+            row++;
+            col = 0;
         }
-     }
+        
+        return tiles;
+    }
 }

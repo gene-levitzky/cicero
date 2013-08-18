@@ -15,7 +15,7 @@ var express         = require('express')
  *  we're using.
  */
 var app = express();
-app.configure(function(){
+app.configure( function() {
     // Sets port number
     app.set('port', process.env.PORT || 3000);
     // Tells it where to find our HTML files
@@ -23,7 +23,7 @@ app.configure(function(){
     // Tells it what templates to use
     app.set('view engine', 'ejs');
     // Tells it to use favicons
-    app.use(express.favicon());
+    app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
     // ...
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
@@ -31,7 +31,6 @@ app.configure(function(){
     app.use(express.session({'secret': 'THE-NARWHAL-BACONS-AT-MIDNIGHT'}));
     app.use(express.methodOverride());
     app.use(app.router);
-    // Tells it where to found our javascript and css files
     app.use(express.static('public'));
 });
 
@@ -48,7 +47,7 @@ var server = http.createServer(app).listen(app.get('port'), function() {
  * Run the Game server
  */
 game.init();
-
+game.run();
 
 /*
  * Route Handling
@@ -67,4 +66,5 @@ app.get('/new-character', function (req, res) {});
  * Socket Handling
  */
 var sio = io.listen(server);
-socketHandler.init(sio);
+sio.set('log level', '1');
+socketHandler.init(sio, game);

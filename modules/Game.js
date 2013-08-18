@@ -55,7 +55,6 @@ var stop = function() {
  * user characters.
  */
 function update() {
-
     for (zone in zones) {
         zones[zone].update();
     }
