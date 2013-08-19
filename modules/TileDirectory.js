@@ -57,61 +57,68 @@ var tileDirectory = {
 
     // A blank tile
     "blank": function() {
-        this.background = {
-            r: 0, 
-            g: 0, 
-            b: 0, 
-            a: 0
+        this["background"] = {
+            "r": 0, 
+            "g": 0, 
+            "b": 0, 
+            "a": 0
         };
     },
     
     // Error tile
     "error": function() {
-        this.background = {
-            r: 256,
-            g: 0,
-            b: 0,
-            a: 256
+        this["background"] = {
+            "r": 256,
+            "g": 0,
+            "b": 0,
+            "a": 256
         };
     },
     
     "test zone": 
     {
-        
+        // Plain Grass
         "#": function() {
-            this.background = {
-                r: 0,
-                g: 256,
-                b: 0,
-                a: 256
+            this["background"] = {
+                "r": 0,
+                "g": 256,
+                "b": 0,
+                "a": 256
+            };
+        },
+        
+        // Tree
+        "Y": function() {
+            this["background"] = {
+                "r": 128,
+                "g": 256,
+                "b": 128,
+                "a": 128
             };
         },
     },
 }
 
 exports.get = function(zone, symbols) {
+
+    zone = zone.toLowerCase();
     
-    var tile = {
-        prev: undefined,
-        tile: {},
-        next: undefined,
-    };
-    var top = tile;
+    var tileContainer = {};
+    var topTile = tileContainer;
     
     for (var i in symbols) {
     
         if (typeof tileDirectory[zone] === 'undefined' || typeof tileDirectory[zone][symbols[i]] === 'undefined') {
-            return new tileDirectory['error']();
+            return { 
+                tile: new tileDirectory['error'](),
+                next: {},
+            };
         }
         
-        tile.tile = new tileDirectory[zone][symbols[i]]();
-        tile.next = {
-            prev: tile,
-            tile: {},
-            next: undefined,
-        };
-        tile = tile.next;
+        tileContainer.tile = new tileDirectory[zone][symbols[i]]();
+        tileContainer.next = {};
+        tileContainer = tileContainer.next;
     }
     
-    return top;
+    return topTile;
 }

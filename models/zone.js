@@ -21,18 +21,18 @@ var Zone = new model.AbstractModel("zone", function(zoneObject)
      */
     this.get = function(x, y) {
         
-        var out = {};
+        var symbols = {};
         
         for (layerId in this.map) {
             if (typeof this.map[layerId][x] == 'undefined') {
-                out[layerId] = '.'; // give it a 'blank' tile
+                symbols[layerId] = '.'; // give it a 'blank' tile
             }
             else {
-                out[layerId] = this.map[layerId][x][y];
+                symbols[layerId] = this.map[layerId][x][y];
             }
         }
         
-        return out;
+        return symbols;
     }
 });
 

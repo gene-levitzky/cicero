@@ -153,8 +153,8 @@ exports.ZoneInstance = function(zone, game) {
         for (gid in this.gameSessions) {
             var gameSession = this.gameSessions[gid];
             var character = gameSession.getCharacter();
-            var environment = getImmediateSurroundings(character.location.x, character.location.y);
-            this.gameSessions[gid].update({environment: environment});
+            var layers = getImmediateSurroundings(character.location.x, character.location.y);
+            this.gameSessions[gid].update({layers: layers});
         }
     }
     
@@ -233,11 +233,11 @@ exports.ZoneInstance = function(zone, game) {
         var tiles = {};
         var row = col = 0;
         
-        for (var i = x - 10; i < x + 10; i++) {
+        for (var i = x - 10; i <= x + 10; i++) {
             
             tiles[row] = {};
         
-            for (var j = y - 10; j < y + 10; j++) {
+            for (var j = y - 10; j <= y + 10; j++) {
                 tiles[row][col++] = TileDirectory.get(zone.name, zone.get(i, j));
             }
             

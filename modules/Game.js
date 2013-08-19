@@ -27,7 +27,7 @@ var intervalId;
 var run = function() {
     
     if (typeof intervalId === "undefined") {
-        intervalId = setInterval(update, 10);
+        intervalId = setInterval(update, 20);
         return "";
     }
     
