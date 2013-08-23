@@ -5,6 +5,8 @@ function loadMode() {
     var context = canvas.getContext('2d');
     context.lineWidth = 1;
     context.strokeStyle = 'black';
+    
+    
 
     __EXPLORE = {
 
@@ -15,11 +17,14 @@ function loadMode() {
         draw: function(layers) {
         
             context.clearRect(0, 0, canvas.width, canvas.height);
+            context.beginPath();
             
             // Radar
             drawMap(9, 25, 25, 21, layers);            
             // Main Map
             drawMap(50, 250, 25, 11, layers);
+            
+            context.stroke();
         },
         
         update: function(data) {
@@ -37,26 +42,22 @@ function loadMode() {
      * @param {object} `layers'  A linked-list of color layers.
      */
     function drawMap(width, leftOffSet, topOffSet, n, layers) {
-        
-        context.beginPath();
       
         for (var i = 0; i < n; i++) {
             for (var j = 0; j < n; j++) {
-                        
+            
                 var currentLayer = layers[i][j];
-                while (typeof currentLayer.tile !== 'undefined') {
-                    var bg = currentLayer.tile.background;
                 
+                while (typeof currentLayer.tile !== 'undefined') {
+                
+                    var bg = currentLayer.tile.background;
+                    
                     context.fillStyle = 'rgba(' + bg.r + ',' + bg.g + ',' + bg.b + ',' + bg.a + ')';
                     context.fillRect(i * width + leftOffSet, j * width + topOffSet, width, width);
-                                        
                     currentLayer = currentLayer.next;
                 }
-                
                 context.rect(i * width + leftOffSet, j * width + topOffSet, width, width);
             }
         }
-        
-        context.stroke();
     }
 }

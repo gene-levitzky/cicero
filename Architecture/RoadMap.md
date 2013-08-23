@@ -82,7 +82,7 @@ At the zone level, the update function might update the coordinate positions of 
 Priority is denoted by stars.
 
 ## Ideas
-* Multiple tiles layered on top of each other to produce stacked effects.
+
 * Players move continuously along grid, not discretely.
 * Visible but stationary mobs.
 * Inventory limitations
@@ -97,10 +97,18 @@ Priority is denoted by stars.
 * Player run shops and businesses.
 * Obscured statistics on everything (no implementation of any game mechanic should be explicit). 
   * Player effectiveness, as measured by physical damange or magical resistance for example, would rise gradually and be imperceptible to the player. 
-  * There should also be no explicit leveling system. Players may attempt to increase their rank with various factions at any point so that their skill level can be gauged by other players. However, these tests should not be conditioned on anything other than the player's capabilities (i.e., the tests should be available at all times and not should not be based on arbitrary factors such as the amount of experience the player has at the time).
+  * There should also be no explicit leveling system. Players may attempt to increase their rank with various factions at any point so that their skill level can be gauged by other players. However, these tests should not be conditioned on anything other than the player's capabilities (i.e., the tests should be available at all times and should not be based on arbitrary factors such as the amount of experience the player has at the time).
   * Skills, i.e. active/passive traits, special maneuvres, etc, would also be gained in a hidden manner. If a player trains heavily with a sword, for example, he may acquire certain traits and skills based on that.
 * Faction driven gameplay.
   * Anything can be a faction. A city. A guild. A bank. Players may start their own factions. 
   * Much of the gameplay should focus around advancing the prestige of a faction. 
-  * A city's economy should be based on the progress of its central faction (the city itself), and the various factions that reside therein.  
+  * A city's economy should be based on the progress of its central faction (the city itself), and the various factions that reside therein. 
+  * Players may purchase property from cities and use them for their factions or for whatever purposes they like.
+  * Factions of a certain size should be able to establish their own cities (factions of over 150 players?).
+  * Some examples of built-in factions:
+    * Banks
+    * City Governance
+    * City Guard
+    * Craft Guilds
+    * Criminal organizations
 * Bottom-up civilization game.
