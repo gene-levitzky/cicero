@@ -38,24 +38,23 @@ function loadMode() {
      * @param {int} `width`      The width of each square in the grid.
      * @param {int} `leftOffSet` The left margin of the grid.
      * @param {int} `topOffSet`  The top margin of the grid.
-     * @param {int} `n`          The dimension of the grid.
      * @param {object} `layers'  A linked-list of color layers.
      */
     function drawMap(width, leftOffSet, topOffSet, n, layers) {
-      
+        console.log(layers);
         for (var i = 0; i < n; i++) {
             for (var j = 0; j < n; j++) {
             
                 var currentLayer = layers[i][j];
                 
-                while (typeof currentLayer.tile !== 'undefined') {
+                for (var k = 0; k < currentLayer.length; k++) {
                 
-                    var bg = currentLayer.tile.background;
+                    var bg = currentLayer[k].background;
                     
                     context.fillStyle = 'rgba(' + bg.r + ',' + bg.g + ',' + bg.b + ',' + bg.a + ')';
-                    context.fillRect(i * width + leftOffSet, j * width + topOffSet, width, width);
-                    currentLayer = currentLayer.next;
+                    context.fillRect(j * width + leftOffSet, i * width + topOffSet, width, width);
                 }
+                
                 context.rect(i * width + leftOffSet, j * width + topOffSet, width, width);
             }
         }

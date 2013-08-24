@@ -4,6 +4,7 @@
  */
 var GameSession = require('./ServerGameSession');
 var TileDirectory = require('./TileDirectory');
+var H__ = require('./HelperFunctions');
 
 exports.ZoneInstance = function(zone, game) {
 
@@ -153,7 +154,7 @@ exports.ZoneInstance = function(zone, game) {
         for (gid in this.gameSessions) {
             var gameSession = this.gameSessions[gid];
             var character = gameSession.getCharacter();
-            var layers = getImmediateSurroundings(character.location.x, character.location.y);
+            var layers = this.getImmediateSurroundings(character.location.x, character.location.y);
             this.gameSessions[gid].update({layers: layers});
         }
     }
@@ -167,59 +168,59 @@ exports.ZoneInstance = function(zone, game) {
      */
     this.moveCharacter = function(character, direction) {
       
-      // The current position of the character
-      var x = character.location.x;
-      var y = character.location.y;
-      
-      // The character's movement speed (distance moved in one unit time)
-      var delta = character.attributes.speed;
-      
-      switch (direction.toLowerCase()) {
-      
-          case "north": 
-              if (typeof this.zone.get(x, y - delta) !== "undefined") {
-                  character.location.y -= delta;
-                  return "";
-              }
-              else {
-                  return "Unreachable destination."
-              }                
-              break;
-              
-          case "south": 
-              if (typeof this.zone.get(x, y + delta) !== "undefined") {
-                  character.location.y += delta;
-                  return "";
-              }
-              else {
-                  return "Unreachable destination."
-              }                
-              break;
-              
-          case "west": 
-              if (typeof this.zone.get(x - delta, y) !== "undefined") {
-                  character.location.x -= delta;
-                  return "";
-              }
-              else {
-                  return "Unreachable destination."
-              }                
-              break;
-              
-          case "east": 
-              if (typeof this.zone.get(x + delta, y) !== "undefined") {
-                  character.location.x += delta;
-                  return "";
-              }
-              else {
-                  return "Unreachable destination."
-              }                
-              break;
-              
-          default: return "Invalid direction."
-      }
+        // The current position of the character
+        var x = character.location.x;
+        var y = character.location.y;
+        
+        // The character's movement speed (distance moved in one unit time)
+        var delta = character.attributes.speed;
+        
+        switch (direction.toLowerCase()) {
+        
+            case "north": 
+                if (typeof this.zone.get(x, y - delta) !== "undefined") {
+                    character.location.y -= delta;
+                    return "";
+                }
+                else {
+                    return "Unreachable destination."
+                }                
+                break;
+                
+            case "south": 
+                if (typeof this.zone.get(x, y + delta) !== "undefined") {
+                    character.location.y += delta;
+                    return "";
+                }
+                else {
+                    return "Unreachable destination."
+                }                
+                break;
+                
+            case "west": 
+                if (typeof this.zone.get(x - delta, y) !== "undefined") {
+                    character.location.x -= delta;
+                    return "";
+                }
+                else {
+                    return "Unreachable destination."
+                }                
+                break;
+                
+            case "east": 
+                if (typeof this.zone.get(x + delta, y) !== "undefined") {
+                    character.location.x += delta;
+                    return "";
+                }
+                else {
+                    return "Unreachable destination."
+                }                
+                break;
+                
+            default: return "Invalid direction."
+        }
     }
-     
+    
     /**
      * Retrieves a 21 x 21 tile grid, centered at the given coordinate.
      * 
@@ -228,17 +229,43 @@ exports.ZoneInstance = function(zone, game) {
      *
      * @return {object} A 21-by-21 grid of tiles, centered at the (x, y).
      */
-    function getImmediateSurroundings(x, y) {
+    this.getImmediateSurroundings = function(rawX, rawY) {
         
-        var tiles = {};
+        var npcs = []
+        var pcs = [];
+        var tiles = [];
         var row = col = 0;
+        var x = Math.floor(rawX / 50);
+        var y = Math.floor(rawY / 50);
         
+        for (var gid in this.gameSessions) {
+            var pc = this.gameSessions[gid].getCharacter();
+            var px = Math.floor(pc.location.x / 50);
+            var py = Math.floor(pc.location.y / 50);
+            if (250 >= H__.euclideanDistance({'x': pc.location.x, 'y': pc.location.y}, {'x': rawX, 'y': rawY})) {
+                if (H__.isUndefined(pcs[px])) {
+                    pcs[px] = [];
+                }
+                
+                if (H__.isUndefined(pcs[px][py])) {
+                    pcs[px][py] = [];
+                    pcs[px][py][0] = pc;
+                }
+                else {
+                    var depth = pcs[px][py].length;
+                    pcs[px][py][depth] = pc;
+                }
+            }
+        }
+
         for (var i = x - 10; i <= x + 10; i++) {
             
-            tiles[row] = {};
+            tiles[row] = [];
         
             for (var j = y - 10; j <= y + 10; j++) {
-                tiles[row][col++] = TileDirectory.get(zone.name, zone.get(i, j));
+                tiles[row][col] = TileDirectory.get(zone.name, zone.get(i, j));
+                tiles[row][col].x = i;
+                tiles[row][col++].y = j;
             }
             
             row++;

@@ -56,17 +56,19 @@
 var tileDirectory = {
 
     // A blank tile
-    "blank": function() {
+    ".": function() {
+        this['type'] = 'null';
         this["background"] = {
-            "r": 0, 
-            "g": 0, 
-            "b": 0, 
+            "r": 256, 
+            "g": 256, 
+            "b": 256, 
             "a": 0
         };
     },
     
     // Error tile
     "error": function() {
+        this['type'] = 'error';
         this["background"] = {
             "r": 256,
             "g": 0,
@@ -79,6 +81,7 @@ var tileDirectory = {
     {
         // Plain Grass
         "#": function() {
+            this['type'] = 'grass';
             this["background"] = {
                 "r": 0,
                 "g": 256,
@@ -89,11 +92,12 @@ var tileDirectory = {
         
         // Tree
         "Y": function() {
+            this['type'] = 'tree';
             this["background"] = {
-                "r": 128,
-                "g": 256,
-                "b": 128,
-                "a": 128
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 256
             };
         },
     },
@@ -103,22 +107,16 @@ exports.get = function(zone, symbols) {
 
     zone = zone.toLowerCase();
     
-    var tileContainer = {};
-    var topTile = tileContainer;
+    var tiles = [];
     
     for (var i in symbols) {
     
         if (typeof tileDirectory[zone] === 'undefined' || typeof tileDirectory[zone][symbols[i]] === 'undefined') {
-            return { 
-                tile: new tileDirectory['error'](),
-                next: {},
-            };
+            return [new tileDirectory['error']()];
         }
         
-        tileContainer.tile = new tileDirectory[zone][symbols[i]]();
-        tileContainer.next = {};
-        tileContainer = tileContainer.next;
+        tiles[i] = new tileDirectory[zone][symbols[i]]();
     }
     
-    return topTile;
+    return tiles;
 }

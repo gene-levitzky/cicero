@@ -20,19 +20,10 @@ var Zone = new model.AbstractModel("zone", function(zoneObject)
      * @return {object} A list of tiles at the given coordinate.
      */
     this.get = function(x, y) {
-        
-        var symbols = {};
-        
-        for (layerId in this.map) {
-            if (typeof this.map[layerId][x] == 'undefined') {
-                symbols[layerId] = '.'; // give it a 'blank' tile
-            }
-            else {
-                symbols[layerId] = this.map[layerId][x][y];
-            }
+        if (typeof this.map[x] == 'undefined' || typeof this.map[x][y] == 'undefined') {
+            return ['.'];
         }
-        
-        return symbols;
+        return this.map[x][y];
     }
 });
 
@@ -45,34 +36,34 @@ var Zone = new model.AbstractModel("zone", function(zoneObject)
  */
 function createMap(mapFile) {
     
-    var map = {};
-       
+    // Read data in from file
     var data = fs.readFileSync(mapFile, 'utf8');
-
-    var layers = data.split('\n\r');
-    console.log(layers.length);
-    for (var i = 0; i < layers.length; i++) {
+    // Split data into layers
+    var layers = data.split('\r\n\r\n');
+    // The map object to be returned
+    var map = {};
     
-        var x = 0;
-        var y = 0;
+    // For each layer
+    for (var depth = 0; depth < layers.length; depth++) {
+    
+        // Split layer into rows
+        var rows = layers[depth].split('\r\n');
+        console.log(rows.length);
+        for (var row = 0; row < rows.length; row++) {
         
-        map[i] = {};
-    
-        for (var j = 0; j < data.length; j++) {
-            // Current character
-            var c = data.charAt(j);
-            // Go to next row
-            if ('\r' === c) {
-                j++;
-                y++;
-                x = 0;
-                continue;
+            // Initialize this row if it doesn't already exist
+            map[row] = map[row] || {};
+        
+            for (var col = 0; col < rows[row].length; col++) {
+                
+                // Initialize this column if it doesn't already exist
+                map[row][col] = map[row][col] || {};
+                // The symbol
+                var s = rows[row][col];
+                if ('.' != s) {
+                    map[row][col][depth] = s;
+                }
             }
-            // Check to make sure this column exists and add it if it doesn't
-            if (typeof map[i][x] === 'undefined') {
-                map[i][x] = {};
-            }
-            map[i][x++][y] = data.charAt(j);
         }
     }
     
