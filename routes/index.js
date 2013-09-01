@@ -150,7 +150,7 @@ exports.indexView = function(req, res) {
         }
     }
     
-    loginView(req, res);
+    exports.loginView(req, res);
 }
 
 

@@ -14,15 +14,18 @@ Champion - 256 (100 [1])
 /*
  * The game mode handles key and mouse inputs.
  */
-var Modes = require("./Modes");
+var Modes = require("../modules/modes");
 
 
-exports.ServerGameSession = function(character, socket) {
-    
-    this.mode = Modes.__EXPLORE;
-    
+exports.ServerGameSession = function(character, socket, zoneInstance) {
+
+    // Context for socket callbacks
+    var self = this;
+
     this.character = character;
     this.socket = socket;
+    this.zoneInstance = zoneInstance;
+    this.mode = new Modes.Explore(this);
     
     this.getCharacter = function() {
         return this.character;
@@ -30,6 +33,14 @@ exports.ServerGameSession = function(character, socket) {
     
     this.getSocket = function() {
         return this.socket;
+    }
+    
+    /** 
+     * Attempts to move the character in the given direction. See 
+     * ZoneInstance.moveCharacter for more information.
+     */
+    this.moveCharacter = function(direction) {
+        return this.zoneInstance.moveCharacter(this.character, direction);
     }
     
     /**
@@ -44,12 +55,11 @@ exports.ServerGameSession = function(character, socket) {
     /////////////////////
     // SOCKET HANDLING //
     /////////////////////
-    
-    this.socket.on('key-event', function(data) {
-        mode.keyListener(data);
+    this.socket.on('key-event', function(key) {
+        self.mode.keyListener(key);
     });
     
-    this.socket.on('mouse-event', function(data) {
-        mode.mouseListener(data);
+    this.socket.on('mouse-event', function(event) {
+        this.mode.mouseListener(event);
     });
 }

@@ -3,27 +3,15 @@ function startSession() {
     loadMode();
 
     var mode = __EXPLORE;
-
     var socket = io.connect('http://localhost');
-   
 
-    /**
-     * Sends the given key event to the server.
-     *
-     * @param {object} The event to be sent.
-     */
-    function keyEvent(event) {
-        
-        socket.emit('key-event', event);
-    }
+    //Sends the given key event to the server.
+    $('body').keydown( function(event) {
+        socket.emit('key-event', event.which);
+    });
 
-
-    /**
-     * Sends the given mouse event to the server.
-     *
-     * @param {object} The event to be sent.
-     */
-    function keyEvent(event) {
+    //Sends the given mouse event to the server.
+    function mouseEvent(event) {
         
         socket.emit('mouse-event', event);
     }

@@ -25,12 +25,9 @@ exports.ZoneInstance = function(zone, game) {
     this.gameSessions = {};
     
     /*
-     * Dictionary of the coordinates of all PC/NPCs in this zone.
+     * List of all sprites to be drawn 
      */
-    this.coordinates = {
-        pc:  {}, // player character coordinates
-        npc: {}, // non-player character coordinates
-    }
+    this.sprites = [];
         
     /**
      * Retrieves the character with the specified ID if it exists, or null
@@ -82,12 +79,6 @@ exports.ZoneInstance = function(zone, game) {
         var gameSession = new GameSession.ServerGameSession(character, socket, this);
         this.gameSessions[character.id] = gameSession;
         
-        // Add to coordinates
-        this.coordinates.pc[character.id] = {
-            x: character.location.x,
-            y: character.location.y,
-        };
-        
         return "";
     }
     
@@ -104,14 +95,40 @@ exports.ZoneInstance = function(zone, game) {
             
             // Remove game session
             delete this.gameSessions[cid];
-            // Remove from coordinates
-            delete this.coordinates.pc[cid];
             return "";
         }
         
         return "That character does not appear to be in this zone.";
     }
     
+    /**
+     * Adds the given sprite.
+     * @param {object} `sprite` The sprite to be added.
+     * @return {boolean} True if sprite added, false otherwise.
+     */
+     this.addSprite = function(sprite) {
+        if (sprite.spriteId in this.sprites) {
+            return false;
+        }
+        
+        this.sprites[sprite.spriteId] = sprite;
+        return true;
+     }
+    
+    /** 
+     * Removes the specified sprite.
+     * @param {string} `type` Type of sprite. Either 'pc' or 'npc'. 
+     * @param {id} `id`       Unique ID of the sprite.
+     * @return {boolean} True if sprite removed, false otherwise.
+     */
+    this.removeSprite = function(id) {
+        if (id in this.sprites) {
+            delete this.sprites[id];
+            return true;
+        }
+        
+        return false;
+    }
     
     /**
      *  Asks the game object to transfer the given character to the given
@@ -149,13 +166,13 @@ exports.ZoneInstance = function(zone, game) {
      * Updates the game zone object, and broadcasts changes to all embedded
      * users.
      */
-    this.update = function() {
+    this.update = function(data) {
 
         for (gid in this.gameSessions) {
             var gameSession = this.gameSessions[gid];
             var character = gameSession.getCharacter();
-            var layers = this.getImmediateSurroundings(character.location.x, character.location.y);
-            this.gameSessions[gid].update({layers: layers});
+            data.env = this.getImmediateSurroundings(character.location.x, character.location.y);
+            this.gameSessions[gid].update(data);
         }
     }
     
@@ -174,48 +191,89 @@ exports.ZoneInstance = function(zone, game) {
         
         // The character's movement speed (distance moved in one unit time)
         var delta = character.attributes.speed;
-        
+
         switch (direction.toLowerCase()) {
         
             case "north": 
-                if (typeof this.zone.get(x, y - delta) !== "undefined") {
+            
+                var tileSymbols = this.zone.get(Math.floor(x), Math.floor(y - delta - character.attributes.size));
+                var tiles = TileDirectory.get(zone.name, tileSymbols);
+                var passable = true;
+                
+                for(var i in tiles) {
+                    if (!tiles[i].passableBy(character)) {
+                        passable = false;
+                        break;
+                    }
+                }
+                
+                if (passable) {
                     character.location.y -= delta;
                     return "";
                 }
                 else {
                     return "Unreachable destination."
                 }                
-                break;
                 
             case "south": 
-                if (typeof this.zone.get(x, y + delta) !== "undefined") {
+                var tileSymbols = this.zone.get(Math.floor(x), Math.floor(y + delta + character.attributes.size))
+                var tiles = TileDirectory.get(zone.name, tileSymbols);
+                var passable = true;
+                console.log({x:Math.floor(x), y:Math.floor(y + delta + character.attributes.size)});
+                for(var i in tiles) {
+                    if (!tiles[i].passableBy(character)) {
+                        passable = false;
+                        break;
+                    }
+                }
+                
+                if (passable) {
                     character.location.y += delta;
                     return "";
                 }
                 else {
                     return "Unreachable destination."
                 }                
-                break;
                 
             case "west": 
-                if (typeof this.zone.get(x - delta, y) !== "undefined") {
+                var tileSymbols = this.zone.get(Math.floor(x - delta - character.attributes.size), Math.floor(y));
+                var tiles = TileDirectory.get(zone.name, tileSymbols);
+                var passable = true;
+              
+                for(var i in tiles) {
+                    if (!tiles[i].passableBy(character)) {
+                        passable = false;
+                        break;
+                    }
+                }
+                
+                if (passable) {
                     character.location.x -= delta;
                     return "";
                 }
                 else {
                     return "Unreachable destination."
                 }                
-                break;
                 
             case "east": 
-                if (typeof this.zone.get(x + delta, y) !== "undefined") {
+                var tileSymbols = this.zone.get(Math.floor(x + delta + character.attributes.size), Math.floor(y));
+                var tiles = TileDirectory.get(zone.name, tileSymbols);
+                var passable = true;
+                
+                for(var i in tiles) {
+                    if (!tiles[i].passableBy(character)) {
+                        passable = false;
+                        break;
+                    }
+                }
+                
+                if (passable) {
                     character.location.x += delta;
                     return "";
                 }
                 else {
                     return "Unreachable destination."
                 }                
-                break;
                 
             default: return "Invalid direction."
         }
@@ -224,54 +282,53 @@ exports.ZoneInstance = function(zone, game) {
     /**
      * Retrieves a 21 x 21 tile grid, centered at the given coordinate.
      * 
-     * @param {int} `x` The x-coordinate.
-     * @param {int} `y` The y-coordinate.
+     * @param {int} `cx` The x-coordinate.
+     * @param {int} `cy` The y-coordinate.
      *
-     * @return {object} A 21-by-21 grid of tiles, centered at the (x, y).
+     * @return {object} A 21-by-21 grid of tiles, centered at (cx, cy).
      */
-    this.getImmediateSurroundings = function(rawX, rawY) {
+    this.getImmediateSurroundings = function(cx, cy) {
         
-        var npcs = []
-        var pcs = [];
+        var dimension = 21;
+        var sprites = [];
         var tiles = [];
-        var row = col = 0;
-        var x = Math.floor(rawX / 50);
-        var y = Math.floor(rawY / 50);
+        var col = 0;
+        var row = 0;
+        var x = Math.round(cx); 
+        var y = Math.round(cy);
         
         for (var gid in this.gameSessions) {
             var pc = this.gameSessions[gid].getCharacter();
-            var px = Math.floor(pc.location.x / 50);
-            var py = Math.floor(pc.location.y / 50);
-            if (250 >= H__.euclideanDistance({'x': pc.location.x, 'y': pc.location.y}, {'x': rawX, 'y': rawY})) {
-                if (H__.isUndefined(pcs[px])) {
-                    pcs[px] = [];
-                }
-                
-                if (H__.isUndefined(pcs[px][py])) {
-                    pcs[px][py] = [];
-                    pcs[px][py][0] = pc;
-                }
-                else {
-                    var depth = pcs[px][py].length;
-                    pcs[px][py][depth] = pc;
-                }
+            if (21 >= H__.euclideanDistance({'x': pc.location.x, 'y': pc.location.y}, {'x': cx, 'y': cy})) {
+                var sprite = { 
+                    'character': pc, 
+                    'x': (pc.location.x - (cx - dimension / 2)), 
+                    'y': (pc.location.y - (cy - dimension / 2)),
+                    'color': {
+                        'r': 0,
+                        'g': 0,
+                        'b': 0,
+                        'a': 256,
+                    },
+                };
+                sprites.push(sprite);
+                console.log(sprite);
             }
         }
-
+        
         for (var i = x - 10; i <= x + 10; i++) {
-            
-            tiles[row] = [];
         
             for (var j = y - 10; j <= y + 10; j++) {
-                tiles[row][col] = TileDirectory.get(zone.name, zone.get(i, j));
-                tiles[row][col].x = i;
-                tiles[row][col++].y = j;
+            
+                tiles[row] = tiles[row] || [];
+                // NOTE: Tiles are stored as [row][col] array, or [y][x]
+                tiles[row++][col] = TileDirectory.get(zone.name, zone.get(i, j));
             }
             
-            row++;
-            col = 0;
+            row = 0;
+            col++;
         }
         
-        return tiles;
+        return {tiles: tiles, sprites: sprites};
     }
 }

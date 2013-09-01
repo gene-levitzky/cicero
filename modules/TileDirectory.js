@@ -58,22 +58,28 @@ var tileDirectory = {
     // A blank tile
     ".": function() {
         this['type'] = 'null';
-        this["background"] = {
+        this['background'] = {
             "r": 256, 
             "g": 256, 
             "b": 256, 
             "a": 0
+        };
+        this['passableBy'] = function(character) {
+            return true;
         };
     },
     
     // Error tile
     "error": function() {
         this['type'] = 'error';
-        this["background"] = {
-            "r": 256,
+        this['background'] = {
+            "r": 0,
             "g": 0,
             "b": 0,
             "a": 256
+        };
+        this['passableBy'] = function(character) {
+            return false;
         };
     },
     
@@ -82,22 +88,28 @@ var tileDirectory = {
         // Plain Grass
         "#": function() {
             this['type'] = 'grass';
-            this["background"] = {
+            this['background'] = {
                 "r": 0,
                 "g": 256,
                 "b": 0,
                 "a": 256
+            };
+            this['passableBy'] = function(character) {
+                return true;
             };
         },
         
         // Tree
         "Y": function() {
             this['type'] = 'tree';
-            this["background"] = {
+            this['background'] = {
                 "r": 0,
                 "g": 0,
                 "b": 0,
                 "a": 256
+            };
+            this['passableBy'] = function(character) {
+                return true;
             };
         },
     },
@@ -109,9 +121,17 @@ exports.get = function(zone, symbols) {
     
     var tiles = [];
     
+    if (typeof symbols === 'undefined') {
+        return [new tileDirectory['error']()];
+    }
+    
     for (var i in symbols) {
     
-        if (typeof tileDirectory[zone] === 'undefined' || typeof tileDirectory[zone][symbols[i]] === 'undefined') {
+        if (  typeof tileDirectory[zone] === 'undefined' 
+              || typeof symbols[i] === 'undefined' 
+              || symbols[i] === ' '
+              || typeof tileDirectory[zone][symbols[i]] === 'undefined' ) 
+        {
             return [new tileDirectory['error']()];
         }
         

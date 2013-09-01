@@ -15,6 +15,14 @@ var ZoneInstance = require('../modules/ZoneInstance');
 var zones = {};
 
 /*
+ * Map of all global data
+ */
+var globalData = {
+
+    groups: {},
+}
+
+/*
  * The timer event ID. Is overriden every time ``run`` is called.
  */
 var intervalId;
@@ -56,7 +64,17 @@ var stop = function() {
  */
 function update() {
     for (zone in zones) {
-        zones[zone].update();
+    
+        var groupsInZone = [];
+        for (gid in globalData.groups) {
+            for (cid in globalData.groups[gid].players) {
+                if (zone.zone.name == globalData.groups[gid].players[cid].zone.name) {
+                    groupsInZone[gid] = globalData.groups[gid];
+                    break;
+                }
+            }
+        }
+        zones[zone].update({groups: groupsInZone});
     }
 }
 

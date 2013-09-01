@@ -20,10 +20,12 @@ var Zone = new model.AbstractModel("zone", function(zoneObject)
      * @return {object} A list of tiles at the given coordinate.
      */
     this.get = function(x, y) {
-        if (typeof this.map[x] == 'undefined' || typeof this.map[x][y] == 'undefined') {
-            return ['.'];
+        
+        if (typeof this.map[y] === 'undefined') {
+            return this.map[y];
         }
-        return this.map[x][y];
+        
+        return this.map[y][x];
     }
 });
 
@@ -48,7 +50,39 @@ function createMap(mapFile) {
     
         // Split layer into rows
         var rows = layers[depth].split('\r\n');
-        console.log(rows.length);
+        
+        // Add padding to top and left edges of maps
+        if (depth == 0) {        
+        
+            var lengthOfLongestRow = 0;
+            var blankString = '';
+            
+            for (var i = 0; i < rows.length; i++) {
+                if (rows[i].length > lengthOfLongestRow) {
+                    lengthOfLongestRow = rows[i].length;
+                }
+            }
+            
+            for (var i = 0; i < lengthOfLongestRow; i++) {
+                blankString += ' ';
+            }
+        
+            for (var i = 0; i < 10; i++) {
+                
+                rows.unshift(blankString);
+                rows.push(blankString);
+                
+                for (var j = 0; j < rows.length; j++) {
+                    rows[j] = ' ' + rows[j] + ' ';
+                }
+            }
+            
+            console.log(rows);
+        }
+        
+        // Offset for padding, only applicable for depth > 0
+        var offset = depth == 0 ? 0 : 10;
+        
         for (var row = 0; row < rows.length; row++) {
         
             // Initialize this row if it doesn't already exist
@@ -61,7 +95,7 @@ function createMap(mapFile) {
                 // The symbol
                 var s = rows[row][col];
                 if ('.' != s) {
-                    map[row][col][depth] = s;
+                    map[row + offset][col + offset][depth] = s;
                 }
             }
         }
