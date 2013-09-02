@@ -196,7 +196,7 @@ exports.ZoneInstance = function(zone, game) {
         
             case "north": 
             
-                var tileSymbols = this.zone.get(Math.floor(x), Math.floor(y - delta - character.attributes.size));
+                var tileSymbols = this.zone.get(Math.round(x), Math.round(y - delta - character.attributes.size));
                 var tiles = TileDirectory.get(zone.name, tileSymbols);
                 var passable = true;
                 
@@ -216,7 +216,7 @@ exports.ZoneInstance = function(zone, game) {
                 }                
                 
             case "south": 
-                var tileSymbols = this.zone.get(Math.floor(x), Math.floor(y + delta + character.attributes.size))
+                var tileSymbols = this.zone.get(Math.round(x), Math.round(y + delta + character.attributes.size))
                 var tiles = TileDirectory.get(zone.name, tileSymbols);
                 var passable = true;
                 //console.log({'x':x,'y':y});
@@ -236,7 +236,7 @@ exports.ZoneInstance = function(zone, game) {
                 }                
                 
             case "west": 
-                var tileSymbols = this.zone.get(Math.floor(x - delta - character.attributes.size), Math.floor(y));
+                var tileSymbols = this.zone.get(Math.round(x - delta - character.attributes.size), Math.round(y));
                 var tiles = TileDirectory.get(zone.name, tileSymbols);
                 var passable = true;
               
@@ -256,7 +256,7 @@ exports.ZoneInstance = function(zone, game) {
                 }                
                 
             case "east": 
-                var tileSymbols = this.zone.get(Math.floor(x + delta + character.attributes.size), Math.floor(y));
+                var tileSymbols = this.zone.get(Math.round(x + delta + character.attributes.size), Math.round(y));
                 var tiles = TileDirectory.get(zone.name, tileSymbols);
                 var passable = true;
                 
@@ -294,16 +294,16 @@ exports.ZoneInstance = function(zone, game) {
         var tiles = [];
         var col = 0;
         var row = 0;
-        var x = Math.floor(cx); 
-        var y = Math.floor(cy);
+        var x = Math.round(cx); 
+        var y = Math.round(cy);
         
         for (var gid in this.gameSessions) {
             var pc = this.gameSessions[gid].getCharacter();
             if (21 >= H__.euclideanDistance({'x': pc.location.x, 'y': pc.location.y}, {'x': cx, 'y': cy})) {
                 var sprite = { 
                     'character': pc, 
-                    'x': pc.location.x - (cx - dimension / 2), 
-                    'y': pc.location.y - (cy - dimension / 2),
+                    'x': pc.location.x - x + dimension / 2, 
+                    'y': pc.location.y - y + dimension / 2,
                     'color': {
                         'r': 0,
                         'g': 0,
