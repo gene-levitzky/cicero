@@ -12,7 +12,9 @@ function loadMode() {
         
         draw: function(data) {
             
+            var sprites = data.env.sprites;
             var tiles = data.env.tiles;
+            var mainSprites = [];
             var mainTiles = [];
             var col = 0;
             var row = 0;
@@ -23,6 +25,23 @@ function loadMode() {
             context.strokeStyle = '#000000';
             context.beginPath();
             
+            // Get sprites for main display
+            for (var i in sprites) {
+            
+                if ( sprites[i].x < Math.floor(3 * tiles.length / 4) && sprites[i].x > Math.floor(tiles.length / 4)
+                  || sprites[i].y < Math.floor(3 * tiles.length / 4) && sprites[i].y > Math.floor(tiles.length / 4) ) {
+                      
+                      mainSprites[i] = {
+                          'character': sprites[i].character,
+                          'color': sprites[i].color,
+                          // Compensate for difference in dimension
+                          'x': sprites[i].x - 5,
+                          'y': sprites[i].y - 5,
+                      };
+                  }
+            }
+            
+            // Get tiles for main display
             for (var i = Math.floor(tiles.length / 4); i < tiles.length - Math.floor(tiles.length / 4); i++) {
                 
                 mainTiles[row] = [];
@@ -47,9 +66,9 @@ function loadMode() {
             context.beginPath();
             
             // Radar
-            drawSprites(9, 25, 25, data.env.sprites);
+            drawSprites(9, 25, 25, sprites);
             // Main map
-            drawSprites(50, 250, 25, data.env.sprites);
+            drawSprites(50, 250, 25, mainSprites);
             
             context.fill();
             context.stroke();
@@ -103,7 +122,7 @@ function loadMode() {
             var x = Math.round(sprite.x * width);
             var y = Math.round(sprite.y * width);
             var radius = sprite.character.attributes.size * width;
-            //console.log({'x':x, 'y':y})
+            //console.log({'spriteX': sprite.x, 'x':x, 'spriteY': sprite.y, 'y':y})
             context.moveTo(leftOffSet + x + radius, topOffSet + y);
             context.arc(leftOffSet + x, topOffSet + y, radius, 0, 2 * Math.PI, false);
             context.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';

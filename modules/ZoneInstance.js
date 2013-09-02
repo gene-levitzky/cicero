@@ -219,7 +219,7 @@ exports.ZoneInstance = function(zone, game) {
                 var tileSymbols = this.zone.get(Math.floor(x), Math.floor(y + delta + character.attributes.size))
                 var tiles = TileDirectory.get(zone.name, tileSymbols);
                 var passable = true;
-                console.log({x:Math.floor(x), y:Math.floor(y + delta + character.attributes.size)});
+                //console.log({'x':x,'y':y});
                 for(var i in tiles) {
                     if (!tiles[i].passableBy(character)) {
                         passable = false;
@@ -294,16 +294,16 @@ exports.ZoneInstance = function(zone, game) {
         var tiles = [];
         var col = 0;
         var row = 0;
-        var x = Math.round(cx); 
-        var y = Math.round(cy);
+        var x = Math.floor(cx); 
+        var y = Math.floor(cy);
         
         for (var gid in this.gameSessions) {
             var pc = this.gameSessions[gid].getCharacter();
             if (21 >= H__.euclideanDistance({'x': pc.location.x, 'y': pc.location.y}, {'x': cx, 'y': cy})) {
                 var sprite = { 
                     'character': pc, 
-                    'x': (pc.location.x - (cx - dimension / 2)), 
-                    'y': (pc.location.y - (cy - dimension / 2)),
+                    'x': pc.location.x - (cx - dimension / 2), 
+                    'y': pc.location.y - (cy - dimension / 2),
                     'color': {
                         'r': 0,
                         'g': 0,
@@ -312,7 +312,6 @@ exports.ZoneInstance = function(zone, game) {
                     },
                 };
                 sprites.push(sprite);
-                console.log(sprite);
             }
         }
         
